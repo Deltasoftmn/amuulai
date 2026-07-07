@@ -551,7 +551,7 @@ export default function Home() {
                 <div className="product-card-arrow">→</div>
               </div>
               <div className="product-card-content">
-                <h3>Хүнсний бүтээгдэхүүн</h3>
+                <h3>Гоо сайханы бүтээгдэхүүн</h3>
                 {/* <p>
                   Lay&apos;s, Cheetos, Mentos, Chupa Chups, Borjomi, Ritter
                   Sport, Magnum зэрэг
