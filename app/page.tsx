@@ -539,10 +539,10 @@ export default function Home() {
           <div className="section-header fade-in-up">
             <div className="section-badge">Бүтээгдэхүүн</div>
             <h2 className="section-title">Манай бүтээгдэхүүнүүд</h2>
-            <p className="section-subtitle">
+            {/* <p className="section-subtitle">
               Дэлхийн шилдэг 50 гаруй брэндүүдийн 3500 гаруй
               бүтээгдэхүүнүүдийг Монгол орныхоо өнцөг булан бүрт хүргэж байна
-            </p>
+            </p> */}
           </div>
           <div className="products-grid">
             <div className="product-card fade-in-up">
@@ -552,10 +552,10 @@ export default function Home() {
               </div>
               <div className="product-card-content">
                 <h3>Хүнсний бүтээгдэхүүн</h3>
-                <p>
+                {/* <p>
                   Lay&apos;s, Cheetos, Mentos, Chupa Chups, Borjomi, Ritter
                   Sport, Magnum зэрэг
-                </p>
+                </p> */}
               </div>
             </div>
             <div className="product-card fade-in-up">
@@ -565,9 +565,9 @@ export default function Home() {
               </div>
               <div className="product-card-content">
                 <h3>Гэр ахуйн бүтээгдэхүүн</h3>
-                <p>
+                {/* <p>
                   Dove, Vanish, Airwick, Cilit Bang, Durex, Merries, Tiret зэрэг
-                </p>
+                </p> */}
               </div>
             </div>
             <div className="product-card fade-in-up">
@@ -577,9 +577,9 @@ export default function Home() {
               </div>
               <div className="product-card-content">
                 <h3>Косметик бүтээгдэхүүн</h3>
-                <p>
+                {/* <p>
                   Nivea, Garnier, Dove, Axe, Rexona, St.Ives, Veet зэрэг
-                </p>
+                </p> */}
               </div>
             </div>
           </div>
