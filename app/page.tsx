@@ -358,13 +358,13 @@ export default function Home() {
         <div className="container">
           <div className="section-header fade-in-up" style={{ textAlign: "center", marginBottom: "50px" }}>
             <h2 className="section-title" style={{ fontSize: "32px", color: "#00829d", fontWeight: "700", position: "relative", display: "inline-block", paddingBottom: "15px" }}>
-              Our Branch Companies
+              Amuulai Group
               <span style={{ content: "''", position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "80px", height: "3px", background: "#0099b8" }}></span>
             </h2>
-            <p className="section-subtitle" style={{ maxWidth: "700px", margin: "20px auto 0 auto", color: "#6b7280", fontSize: "14px", lineHeight: "1.6" }}>
+            {/* <p className="section-subtitle" style={{ maxWidth: "700px", margin: "20px auto 0 auto", color: "#6b7280", fontSize: "14px", lineHeight: "1.6" }}>
               A diversified portfolio of industry leaders, each committed to the group's core values
               of stability, prestige, and sustainable development.
-            </p>
+            </p> */}
           </div>
 
           <div className="subsidiaries-grid fade-in-up">
