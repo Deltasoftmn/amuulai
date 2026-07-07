@@ -590,11 +590,10 @@ export default function Home() {
       <section className="section" id="brands">
         <div className="container">
           <div className="section-header fade-in-up">
-            <div className="section-badge">Харилцагчид</div>
-            <h2 className="section-title">Манай харилцагч брэндүүд</h2>
+            {/* <div className="section-badge">Харилцагчид</div> */}
+            <h2 className="section-title">TOGETHER WITH US </h2>
             <p className="section-subtitle">
-              Дэлхийд тэргүүлэгч 25 гаруй компаниудын Монгол дахь онцгой эрхт
-              дистрибъютер
+              Amuulai LLC imports and sells beauty, health and nutrition products from more than 30 Japanese companies with a long history of high-quality safe products in Mongolia. 
             </p>
           </div>
         </div>
