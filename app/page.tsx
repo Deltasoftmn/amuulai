@@ -546,14 +546,7 @@ export default function Home() {
           </div>
           <div className="products-grid">
             <div className="product-card fade-in-up">
-              <div className="product-card-image">
-                <Image
-                  src="/images/food_products.png"
-                  alt="Хүнсний бүтээгдэхүүн"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
+              <div className="product-card-image" style={{ backgroundColor: "#9ca3af" }}>
                 <div className="product-card-overlay" />
                 <div className="product-card-arrow">→</div>
               </div>
@@ -566,14 +559,7 @@ export default function Home() {
               </div>
             </div>
             <div className="product-card fade-in-up">
-              <div className="product-card-image">
-                <Image
-                  src="/images/household_products.png"
-                  alt="Гэр ахуйн бүтээгдэхүүн"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
+              <div className="product-card-image" style={{ backgroundColor: "#9ca3af" }}>
                 <div className="product-card-overlay" />
                 <div className="product-card-arrow">→</div>
               </div>
@@ -585,14 +571,7 @@ export default function Home() {
               </div>
             </div>
             <div className="product-card fade-in-up">
-              <div className="product-card-image">
-                <Image
-                  src="/images/cosmetic_products.png"
-                  alt="Косметик бүтээгдэхүүн"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
+              <div className="product-card-image" style={{ backgroundColor: "#9ca3af" }}>
                 <div className="product-card-overlay" />
                 <div className="product-card-arrow">→</div>
               </div>
