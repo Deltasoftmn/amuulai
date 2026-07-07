@@ -608,6 +608,65 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== LOCATION SECTION ===== */}
+      <section className="section" id="location" style={{ backgroundColor: "#f0f2f5" }}>
+        <div className="container">
+          <div className="section-header fade-in-up" style={{ textAlign: "left", marginBottom: "40px" }}>
+            <h2 className="section-title" style={{ fontSize: "32px", color: "#1a1a2e", textTransform: "uppercase", fontFamily: "serif" }}>OUR LOCATION</h2>
+          </div>
+          
+          <div className="location-map-container fade-in-up">
+            <Image 
+              src="/images/mongolia_map.png" 
+              alt="Mongolia Map" 
+              width={1000} 
+              height={500} 
+              style={{ width: "100%", height: "auto" }} 
+            />
+            {/* Dynamic location pins */}
+            <div className="location-pin" style={{ top: "45%", left: "20%" }}></div>
+            <div className="location-pin" style={{ top: "35%", left: "38%" }}></div>
+            <div className="location-pin" style={{ top: "50%", left: "35%" }}></div>
+            <div className="location-pin" style={{ top: "48%", left: "42%" }}></div>
+            <div className="location-pin" style={{ top: "60%", left: "38%" }}></div>
+            <div className="location-pin" style={{ top: "38%", left: "50%" }}></div>
+            <div className="location-pin" style={{ top: "58%", left: "48%" }}></div>
+            <div className="location-pin" style={{ top: "75%", left: "50%" }}></div>
+            <div className="location-pin" style={{ top: "40%", left: "58%" }}></div>
+            <div className="location-pin" style={{ top: "50%", left: "65%" }}></div>
+            <div className="location-pin" style={{ top: "75%", left: "65%" }}></div>
+            <div className="location-pin" style={{ top: "48%", left: "75%" }}></div>
+            <div className="location-pin" style={{ top: "58%", left: "76%" }}></div>
+            
+            <div className="location-pin pin-large" style={{ top: "52%", left: "57%" }}></div>
+            <div className="location-pin pin-large pin-gray" style={{ top: "48%", left: "59%" }}></div>
+          </div>
+
+          <div className="location-stats fade-in-up" style={{ marginTop: "-40px", position: "relative", zIndex: 10 }}>
+            <div className="loc-stat-circle large" style={{ backgroundColor: "#0099b8" }}>
+              <div className="loc-stat-num">49</div>
+              <span>MILD</span>
+            </div>
+            <div className="loc-stat-circle" style={{ backgroundColor: "#6b7280" }}>
+              <div className="loc-stat-num">3</div>
+              <span>OEO</span>
+            </div>
+            <div className="loc-stat-circle" style={{ backgroundColor: "#1a1a2e" }}>
+              <div className="loc-stat-num">3</div>
+              <span>TON618</span>
+            </div>
+            <div className="loc-stat-circle" style={{ backgroundColor: "#312e81" }}>
+              <div className="loc-stat-num">3</div>
+              <span>GENKI</span>
+            </div>
+            <div className="loc-stat-circle" style={{ backgroundColor: "#06b6d4" }}>
+              <div className="loc-stat-num">1</div>
+              <span>COZLAB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== NEWS SECTION ===== */}
       <section className="section section-bg" id="news">
         <div className="container">
