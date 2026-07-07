@@ -548,7 +548,7 @@ export default function Home() {
             <div className="product-card fade-in-up">
               <div className="product-card-image">
                 <Image
-                  src="/images/food.png"
+                  src="/images/food_products.png"
                   alt="Хүнсний бүтээгдэхүүн"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -568,7 +568,7 @@ export default function Home() {
             <div className="product-card fade-in-up">
               <div className="product-card-image">
                 <Image
-                  src="/images/household.png"
+                  src="/images/household_products.png"
                   alt="Гэр ахуйн бүтээгдэхүүн"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -587,7 +587,7 @@ export default function Home() {
             <div className="product-card fade-in-up">
               <div className="product-card-image">
                 <Image
-                  src="/images/cosmetics.png"
+                  src="/images/cosmetic_products.png"
                   alt="Косметик бүтээгдэхүүн"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -742,88 +742,25 @@ export default function Home() {
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="footer" id="contact">
+      <footer className="footer" id="contact" style={{ backgroundColor: "#4f6a79", textAlign: "center", padding: "60px 0", color: "#ffffff", backgroundImage: "url('/pattern2.png')", backgroundBlendMode: "overlay" }}>
         <div className="container">
-          <div className="footer-grid">
-            <div className="footer-col">
-              <h4>MENU</h4>
-              <ul>
-                <li>
-                  <a href="#">ABOUT US</a>
-                </li>
-                <li>
-                  <a href="#">SUSTAINABILITY</a>
-                </li>
-                <li>
-                  <a href="#">PRODUCTS</a>
-                </li>
-                <li>
-                  <a href="#">NEWS</a>
-                </li>
-                <li>
-                  <a href="#">HUMAN RESOURCES</a>
-                </li>
-                <li>
-                  <a href="#">CONTACT US</a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="footer-col">
-              <h4>Contact Us</h4>
-              <div className="footer-contact-item">
-                <div className="footer-contact-icon">📍</div>
-                <div className="footer-contact-text">
-                  <strong>Address</strong>
-                 Amuulai LLC
-                 Park Garden Plaza-13 Floor,
-                 18 khoroo, Khan-Uul Discrict,
-                 Ulaanbaatar Mongolia
-                </div>
-              </div>
-              <div className="footer-contact-item">
-                <div className="footer-contact-icon">📞</div>
-                <div className="footer-contact-text">
-                  <strong>Утас</strong>
-                  +976 -8611-8040
-                </div>
-              </div>
-              <div className="footer-contact-item">
-                <div className="footer-contact-icon">✉️</div>
-                <div className="footer-contact-text">
-                  <strong>E-Mail</strong>
-                  ariunzaya@amuulai.mn
-                </div>
-              </div>
-            </div>
-
-            <div className="footer-col">
-              <h4>Newsletter</h4>
-              <p
-                style={{
-                  fontSize: "13.5px",
-                  color: "rgba(255,255,255,0.6)",
-                  lineHeight: 1.7,
-                  marginBottom: "16px",
-                }}
-              >
-                Манай сүүлийн үеийн мэдээ мэдээллийг авахын тулд бүртгүүлнэ үү.
-              </p>
-              <div className="newsletter-form">
-                <input
-                  type="email"
-                  placeholder="Имэйл хаягаа оруулна уу"
-                  className="newsletter-input"
-                />
-                <button className="newsletter-btn">Илгээх</button>
-              </div>
-            </div>
-
+          <div style={{ marginBottom: "30px", display: "flex", justifyContent: "center" }}>
+            <Image src="/logo_white.png" alt="Amuulai Group" width={180} height={48} style={{ objectFit: "contain" }} />
+          </div>
+          
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "30px", marginBottom: "30px", fontSize: "14px" }}>
+            <a href="#" style={{ color: "#ffffff", textDecoration: "none", opacity: 0.9, transition: "opacity 0.3s" }}>Privacy Policy</a>
+            <a href="#" style={{ color: "#ffffff", textDecoration: "none", opacity: 0.9, transition: "opacity 0.3s" }}>Terms of Service</a>
+            <a href="#" style={{ color: "#ffffff", textDecoration: "none", opacity: 0.9, transition: "opacity 0.3s" }}>Sustainability Report</a>
+            <a href="#" style={{ color: "#ffffff", textDecoration: "none", opacity: 0.9, transition: "opacity 0.3s" }}>Career Opportunities</a>
+            <a href="#" style={{ color: "#ffffff", textDecoration: "none", opacity: 0.9, transition: "opacity 0.3s" }}>Investor Relations</a>
           </div>
 
-          <div className="footer-bottom">
-            <span>© 2026 Amuulai Group ХХК. Бүх эрх хуулиар хамгаалагдсан.</span>
-          </div>
+          <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.1)", maxWidth: "600px", margin: "0 auto 30px" }}></div>
+
+          <p style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.7)", margin: 0 }}>
+            © 2024 Amuulai Group. Preserving Heritage, Driving Progress.
+          </p>
         </div>
       </footer>
     </>
