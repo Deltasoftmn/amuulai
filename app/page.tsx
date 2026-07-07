@@ -5,7 +5,14 @@ import Image from "next/image";
 
 
 
-const navItems = [
+type NavItem = {
+  label: string;
+  href: string;
+  active?: boolean;
+  children?: { label: string; href: string }[];
+};
+
+const navItems: NavItem[] = [
   { label: "HOME", href: "#", active: true },
   {
     label: "ABOUT US",
