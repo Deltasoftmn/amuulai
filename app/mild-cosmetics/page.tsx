@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 
 export default function MildCosmetics() {
   const [scrolled, setScrolled] = useState(false);
@@ -82,7 +83,7 @@ export default function MildCosmetics() {
       {/* HEADER */}
       <header className={`header ${scrolled ? "scrolled" : "scrolled"}`} style={{ backgroundColor: scrolled ? 'rgba(255,255,255,0.95)' : '#4f6a79' }}>
         <div className="header-main">
-          <Link href="/" className="logo">
+          <a href="/" className="logo">
             <Image
               src="/logo_white.png"
               alt="Amuulai Group"
@@ -90,7 +91,7 @@ export default function MildCosmetics() {
               height={48}
               className="logo-img"
             />
-          </Link>
+          </a>
           <nav className="nav">
             {navItems.map((item) => (
               <div key={item.label} className={`nav-item ${item.megaType ? 'mega-nav-item' : ''}`}>
@@ -220,31 +221,7 @@ export default function MildCosmetics() {
       </main>
 
       {/* FOOTER */}
-      <footer className="footer" id="contact" style={{ backgroundColor: "#4f6a79", textAlign: "center", padding: "60px 0", color: "#ffffff", backgroundImage: "url('/pattern2.png')", backgroundBlendMode: "overlay" }}>
-        <div className="container">
-          <div style={{ marginBottom: "30px", display: "flex", justifyContent: "center" }}>
-            <Image src="/logo_white.png" alt="Amuulai Group" width={180} height={48} style={{ objectFit: "contain" }} />
-          </div>
-          
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "30px", marginBottom: "30px", fontSize: "14px", textTransform: "uppercase", fontWeight: "600" }}>
-            {navItems.map((item) => (
-              <a 
-                key={item.label} 
-                href={item.href} 
-                style={{ color: "#ffffff", textDecoration: "none", opacity: 0.8, transition: "opacity 0.3s" }}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-
-          <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.1)", maxWidth: "600px", margin: "0 auto 30px" }}></div>
-
-          <p style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.7)", margin: 0 }}>
-            © 2026 Amuulai Group. Preserving Heritage, Driving Progress.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
