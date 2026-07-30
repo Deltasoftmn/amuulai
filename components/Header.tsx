@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface HeaderProps {
   navItems?: Array<{
@@ -12,6 +13,7 @@ interface HeaderProps {
     children?: any[];
   }>;
   logoUrl?: string;
+  transparentOnTop?: boolean;
 }
 
 const defaultNav = [
@@ -29,12 +31,15 @@ const defaultNav = [
   },
   { title: "Брэндүүд", url: "/#products" },
   { title: "Хамтын ажиллагаа", url: "/#partners" },
-  { title: "Мэдээ мэдээлэл", url: "/#news" },
+  { title: "Мэдээ мэдээлэл", url: "/news" },
   { title: "Холбоо барих", url: "/#contact" },
 ];
 
-export default function Header({ navItems, logoUrl }: HeaderProps) {
+export default function Header({ navItems, logoUrl, transparentOnTop }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+
   const items = navItems && navItems.length > 0 ? navItems : defaultNav;
 
   useEffect(() => {
@@ -45,8 +50,25 @@ export default function Header({ navItems, logoUrl }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isTransparent = (isHomePage || transparentOnTop) && !scrolled;
+
   return (
-    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
+    <header 
+      className={`header ${scrolled || !isHomePage ? 'scrolled' : ''}`}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        backgroundColor: isTransparent ? 'transparent' : '#4f6a79',
+        backgroundImage: isTransparent ? 'none' : "url('/pattern2.png')",
+        backgroundBlendMode: isTransparent ? 'normal' : 'overlay',
+        borderBottom: isTransparent ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: isTransparent ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.15)',
+        transition: 'all 0.3s ease',
+      }}
+    >
       <div className="header-main">
         <a href="/" className="logo">
           <Image

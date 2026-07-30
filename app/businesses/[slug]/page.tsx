@@ -3,7 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getBusinessBySlug } from '@/lib/api';
 
+import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { getNavMenu, getSettingData, getStrapiMedia } from '@/lib/api';
 
 interface PageProps {
   params: Promise<{
@@ -33,6 +35,11 @@ const fallbackBusinessData: Record<string, any> = {
 export default async function BusinessDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const fetchedBusiness = await getBusinessBySlug(slug);
+  const navItems = await getNavMenu();
+  const settingData = await getSettingData();
+  const logoUrl = settingData?.mainLogo?.url 
+    ? getStrapiMedia(settingData.mainLogo.url) 
+    : (settingData?.whiteLogo?.url ? getStrapiMedia(settingData.whiteLogo.url) : undefined);
 
   const business = fetchedBusiness?.attributes || fallbackBusinessData[slug] || {
     name: slug.toUpperCase().replace('-', ' '),
@@ -48,7 +55,8 @@ export default async function BusinessDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <div className="bg-slate-50 min-h-screen py-12 lg:py-20">
+      <Header navItems={navItems} logoUrl={logoUrl} />
+      <div className="bg-slate-50 min-h-screen pt-28 pb-12 lg:pb-20">
         <div className="max-w-[1320px] mx-auto px-6">
           {/* Breadcrumb Navigation */}
           <div className="mb-8 flex items-center gap-2 text-sm text-gray-500 font-medium">

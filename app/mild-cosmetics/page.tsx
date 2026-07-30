@@ -73,7 +73,7 @@ export default function MildCosmetics() {
       children: brands.map(brand => ({ label: brand, href: "/#products" }))
     },
     { label: "Хамтын ажиллагаа", href: "/#partners" },
-    { label: "Мэдээ мэдээлэл", href: "/#news" },
+    { label: "Мэдээ мэдээлэл", href: "/news" },
     { label: "Ажиллах орчин", href: "/#" },
     { label: "Холбоо барих", href: "/#contact" },
   ];

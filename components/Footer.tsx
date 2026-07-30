@@ -252,7 +252,7 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
                 <Link href="/#businesses" style={{ color: "#cbd5e1", textDecoration: "none" }}>Бизнесүүд</Link>
                 <Link href="/#products" style={{ color: "#cbd5e1", textDecoration: "none" }}>Брэндүүд</Link>
                 <Link href="/#values" style={{ color: "#cbd5e1", textDecoration: "none" }}>Бидний үнэ цэнэ</Link>
-                <Link href="/#news" style={{ color: "#cbd5e1", textDecoration: "none" }}>Мэдээ мэдээлэл</Link>
+                <Link href="/news" style={{ color: "#cbd5e1", textDecoration: "none" }}>Мэдээ мэдээлэл</Link>
                 <Link href="/#contact" style={{ color: "#cbd5e1", textDecoration: "none" }}>Холбоо барих</Link>
               </>
             )}

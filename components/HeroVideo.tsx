@@ -7,20 +7,39 @@ interface HeroVideoProps {
   videoUrl?: string;
 }
 
-function extractYouTubeId(url: string | null | undefined): string {
-  if (!url) return 'ZVm9bXzfddw';
-  const trimmed = url.trim();
-  
+function getYouTubeEmbedSrc(rawUrl?: string): string {
+  const defaultId = 'ZVm9bXzfddw';
+  const defaultSrc = `https://www.youtube.com/embed/${defaultId}?autoplay=1&mute=1&loop=1&playlist=${defaultId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1`;
+
+  if (!rawUrl || typeof rawUrl !== 'string' || !rawUrl.trim()) {
+    return defaultSrc;
+  }
+
+  const trimmed = rawUrl.trim();
+
+  // If already a full embed URL from YouTube
+  if (trimmed.includes('youtube.com/embed/')) {
+    let src = trimmed;
+    if (!src.includes('enablejsapi=1')) {
+      src += (src.includes('?') ? '&' : '?') + 'enablejsapi=1';
+    }
+    if (!src.includes('autoplay=1')) src += '&autoplay=1';
+    if (!src.includes('mute=1')) src += '&mute=1';
+    return src;
+  }
+
+  // Extract 11-char video ID from watch link, youtu.be, or raw ID
+  let videoId = defaultId;
   if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
-    return trimmed;
+    videoId = trimmed;
+  } else {
+    const match = trimmed.match(/(?:v=|v\/|vi\/|youtu\.be\/|embed\/|\?v=|\&v=)([^"&?\/\s]{11})/);
+    if (match && match[1]) {
+      videoId = match[1];
+    }
   }
 
-  const match = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-  if (match && match[1]) {
-    return match[1];
-  }
-
-  return 'ZVm9bXzfddw';
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1`;
 }
 
 export default function HeroVideo({ data, videoUrl }: HeroVideoProps) {
@@ -28,9 +47,7 @@ export default function HeroVideo({ data, videoUrl }: HeroVideoProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const rawUrl = data?.URL || data?.url || videoUrl;
-  const videoId = extractYouTubeId(rawUrl);
-
-  const embedSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1`;
+  const embedSrc = getYouTubeEmbedSrc(rawUrl);
 
   const toggleMute = () => {
     if (iframeRef.current) {
@@ -44,18 +61,40 @@ export default function HeroVideo({ data, videoUrl }: HeroVideoProps) {
   };
 
   return (
-    <section className="hero" id="home">
-      <div className="hero-video-wrapper">
+    <section className="hero" id="home" style={{ position: 'relative', width: '100%', height: '85vh', minHeight: '550px', backgroundColor: '#0f172a', overflow: 'hidden' }}>
+      <div className="hero-video-wrapper" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'hidden' }}>
         <iframe
           ref={iframeRef}
           src={embedSrc}
-          title="Amuulai Group Video"
-          allow="autoplay; encrypted-media"
+          title="Amuulai Group Hero Video"
+          allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
           className="hero-video-iframe"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '100vw',
+            height: '56.25vw',
+            minHeight: '100%',
+            minWidth: '177.78vh',
+            transform: 'translate(-50%, -50%)',
+            border: 0,
+            pointerEvents: 'none'
+          }}
         />
-        <div className="hero-slide-overlay" />
+        <div 
+          className="hero-slide-overlay" 
+          style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            background: 'linear-gradient(135deg, rgba(0, 42, 84, 0.6) 0%, rgba(0, 61, 122, 0.4) 50%, rgba(0, 160, 227, 0.25) 100%)',
+            pointerEvents: 'none'
+          }} 
+        />
       </div>
+
+      {/* Mute / Unmute Toggle Button */}
       <button
         onClick={toggleMute}
         className="mute-btn"
@@ -76,6 +115,7 @@ export default function HeroVideo({ data, videoUrl }: HeroVideoProps) {
           justifyContent: 'center',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
         }}
         aria-label={isMuted ? 'Unmute video' : 'Mute video'}
       >

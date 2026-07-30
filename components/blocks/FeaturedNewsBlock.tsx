@@ -112,6 +112,28 @@ export default function FeaturedNewsBlock({ data, articles }: FeaturedNewsBlockP
             </div>
           ))}
         </div>
+
+        <div style={{ textAlign: 'center', marginTop: '45px' }}>
+          <Link
+            href="/news"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              border: '1px solid #00829d',
+              color: '#00829d',
+              padding: '10px 28px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: '700',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease'
+            }}
+            className="hover:bg-[#00829d] hover:text-white"
+          >
+            БҮХ МЭДЭЭЛЭЛ ХАРАХ &rarr;
+          </Link>
+        </div>
       </div>
     </section>
   );

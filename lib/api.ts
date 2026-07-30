@@ -17,7 +17,7 @@ export async function fetchStrapiAPI<T>(
   options: RequestInit = {}
 ): Promise<T | null> {
   try {
-    const queryString = new URLSearchParams(urlParamsObject).toString();
+    const queryString = new URLSearchParams(urlParamsObject).toString().replace(/%5B/g, '[').replace(/%5D/g, ']');
     const requestUrl = `${STRAPI_API_URL}${path}${queryString ? `?${queryString}` : ''}`;
 
     const mergedOptions: RequestInit = {
@@ -50,11 +50,12 @@ export async function getGlobalSettings() {
 
 export async function getHomePageData() {
   const res = await fetchStrapiAPI<any>('/home', {
-    'populate[blocks][populate]': '*',
     'populate[blocks][on][components.slider][populate]': '*',
     'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
     'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
-    'populate[blocks][on][components.our-values-section][populate]': '*',
+    'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
+    'populate[blocks][on][components.our-values-section][populate][leftImage][populate]': '*',
+    'populate[blocks][on][components.our-values-section][populate][values][populate]': '*',
     'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
     'populate[blocks][on][components.tabs-section][populate][tabs][populate][brands][populate]': '*',
     'populate[blocks][on][components.featured-news-section][populate]': '*',
@@ -62,13 +63,25 @@ export async function getHomePageData() {
   return res?.data?.blocks || res?.data?.attributes?.blocks || null;
 }
 
-export async function getNewsArticles(limit = 3) {
+export async function getNewsArticles(limit = 100) {
   const res = await fetchStrapiAPI<any>('/articles', {
     'sort[0]': 'publishedAt:desc',
     'pagination[limit]': limit,
     populate: '*',
   });
   return res?.data || [];
+}
+
+export async function getArticleBySlug(slug: string) {
+  const res = await fetchStrapiAPI<any>('/articles', {
+    'filters[slug][$eq]': slug,
+    populate: '*',
+  });
+  if (res?.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  const resId = await fetchStrapiAPI<any>(`/articles/${slug}`, { populate: '*' });
+  return resId?.data || null;
 }
 
 export async function getTreeMenus() {
@@ -89,8 +102,26 @@ export async function getFooterMenu() {
 }
 
 export async function getBrands() {
-  const res = await fetchStrapiAPI<any>('/brands', { populate: '*' });
+  const res = await fetchStrapiAPI<any>('/brands', { populate: 'featuredLogos' });
   return res?.data || [];
+}
+
+export async function getProducts(brandSlug?: string) {
+  try {
+    const params: any = {
+      populate: '*',
+      'populate[image][populate]': '*',
+      'populate[brand][populate]': '*',
+    };
+    if (brandSlug && brandSlug !== 'all') {
+      params['filters[brand][slug][$eq]'] = brandSlug;
+    }
+    const res = await fetchStrapiAPI<any>('/products', params);
+    return res?.data || [];
+  } catch (err) {
+    console.error('Error fetching products:', err);
+    return [];
+  }
 }
 
 export async function getBusinessBySlug(slug: string) {
@@ -99,6 +130,32 @@ export async function getBusinessBySlug(slug: string) {
     populate: '*',
   });
   return res?.data?.[0] || null;
+}
+
+export async function getPageBySlug(slug: string) {
+  try {
+    const res = await fetchStrapiAPI<any>('/pages', {
+      'filters[slug][$eq]': slug,
+      'populate[blocks][on][components.product-category-block][populate][brands][populate]': '*',
+      'populate[blocks][on][components.product-category-block][populate][featuredImage][populate]': '*',
+      'populate[blocks][on][components.slider][populate]': '*',
+      'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
+      'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
+      'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
+      'populate[blocks][on][components.our-values-section][populate][leftImage][populate]': '*',
+      'populate[blocks][on][components.our-values-section][populate][values][populate]': '*',
+      'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
+      'populate[blocks][on][components.tabs-section][populate][tabs][populate]': '*',
+      'populate[blocks][on][components.featured-news-section][populate]': '*',
+      'populate[FeaturedImage][populate]': '*',
+    });
+    if (res?.data && res.data.length > 0) {
+      return res.data[0];
+    }
+  } catch (err) {
+    console.error('Error fetching page by slug:', err);
+  }
+  return null;
 }
 
 export async function getFooterData() {

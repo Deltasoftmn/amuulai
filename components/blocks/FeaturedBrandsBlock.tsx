@@ -99,7 +99,8 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
                           alt={`${brand.title || 'Brand'} logo ${subId + 1}`}
                           width={100}
                           height={60}
-                          style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', mixBlendMode: 'darken' }}
+                          style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', mixBlendMode: 'darken', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
+                          className="hover:scale-[1.2]"
                           onError={(e: any) => {
                             e.currentTarget.style.display = 'none';
                           }}

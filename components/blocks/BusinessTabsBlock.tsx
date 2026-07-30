@@ -50,6 +50,17 @@ const defaultDistributionBusinesses = [
   }
 ];
 
+function getBrandFallbackLogo(titleStr?: string): string {
+  const t = (titleStr || '').toLowerCase();
+  if (t.includes('mild')) return '/mild.png';
+  if (t.includes('genki')) return '/genki.png';
+  if (t.includes('oeo') || t.includes('oo')) return '/oo.png';
+  if (t.includes('ton')) return '/Ton.png';
+  if (t.includes('ikigai')) return '/ikigai.png';
+  if (t.includes('amuulai')) return '/logo.png';
+  return '/logo.png';
+}
+
 export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
 
@@ -148,7 +159,7 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
             const logoUrl = brand.logoUrl || brand.logo?.url || brand.logo?.data?.attributes?.url;
             const fullLogoPath = logoUrl 
               ? (logoUrl.startsWith('/') && !logoUrl.startsWith('/uploads') ? logoUrl : getStrapiMedia(logoUrl))
-              : '/mild.png';
+              : getBrandFallbackLogo(brand.title);
             const slug = brand.slug || brand.title?.toLowerCase().replace(/\s+/g, '-') || 'business';
 
             return (

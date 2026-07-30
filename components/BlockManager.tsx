@@ -8,6 +8,9 @@ import OurValuesBlock from './blocks/OurValuesBlock';
 
 import HeroVideo from './HeroVideo';
 
+import CategoryShowcaseBlock from './blocks/CategoryShowcaseBlock';
+import ProductCatalog from './ProductCatalog';
+
 interface BlockManagerProps {
   blocks: Array<{
     __component: string;
@@ -27,6 +30,19 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
         const key = `${block.__component}-${block.id || index}`;
 
         switch (block.__component) {
+          case 'components.products-section':
+          case 'components.product-catalog-block':
+          case 'blocks.product-catalog':
+          case 'sections.products-catalog':
+            return <ProductCatalog key={key} initialBrands={block.brands} initialProducts={block.products} categoryTitle={block.categoryName || 'Хүнс'} />;
+
+          case 'components.product-category-block':
+          case 'blocks.product-category-block':
+          case 'components.category-showcase-section':
+          case 'components.business-category-block':
+          case 'sections.category-showcase':
+          case 'blocks.category-showcase':
+            return <CategoryShowcaseBlock key={key} data={block} index={index} />;
           case 'components.slider':
           case 'sections.slider':
             return <HeroVideo key={key} data={block} />;
