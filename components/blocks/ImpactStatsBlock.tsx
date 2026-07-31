@@ -82,12 +82,11 @@ function CountUpNumber({ value, suffix: rawSuffix }: { value: string; suffix?: s
 }
 
 export default function ImpactStatsBlock({ data }: ImpactStatsBlockProps) {
-  const title = data?.title || data?.sectionTitle || 'Бидний нөлөө';
+  const title = data?.title || data?.sectionTitle || null;
   
-  // Strictly use ONLY Strapi data from data.Statistics or data.stats
   const rawStats = data?.Statistics || data?.stats || [];
   
-  const statsList = Array.isArray(rawStats) ? rawStats.map((item: any) => {
+  const fetchedStats = Array.isArray(rawStats) ? rawStats.map((item: any) => {
     const iconUrl = item.icon?.url || item.icon?.data?.attributes?.url || item.iconUrl;
     return {
       label: item.label || item.title || '',
@@ -95,32 +94,40 @@ export default function ImpactStatsBlock({ data }: ImpactStatsBlockProps) {
       suffix: item.suffix || '',
       icon: iconUrl ? getStrapiMedia(iconUrl) : null,
     };
-  }) : [];
+  }).filter((item: any) => item.label || item.value) : [];
 
-  if (statsList.length === 0) {
-    return null;
-  }
+  const defaultStats = [
+    { label: 'Жил Туршлага', value: '23+', suffix: '' },
+    { label: 'Салбар Дэлгүүр', value: '62+', suffix: '' },
+    { label: 'Нэр Төрлийн Бүтээгдэхүүн', value: '7,400+', suffix: '' },
+    { label: 'Олон Улсын Брэнд', value: '50+', suffix: '' },
+    { label: 'Аймгийн Хэрэглэгчид', value: '21', suffix: '' },
+  ];
+
+  const statsList = fetchedStats.length > 0 ? fetchedStats : defaultStats;
 
   return (
     <section className="stats-bar" style={{ paddingTop: '100px', paddingBottom: '40px', marginTop: '0', background: 'white', position: 'relative', zIndex: 30 }}>
       <div className="stats-inner">
-        <div className="section-header" style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div
-            className="section-badge"
-            style={{
-              background: 'rgba(0, 130, 157, 0.1)',
-              color: '#00829d',
-              padding: '8px 20px',
-              borderRadius: '30px',
-              fontSize: '14px',
-              fontWeight: 'bold',
-              display: 'inline-block',
-              marginBottom: '10px',
-            }}
-          >
-            {title}
+        {title && (
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <div
+              className="section-badge"
+              style={{
+                background: 'rgba(0, 130, 157, 0.1)',
+                color: '#00829d',
+                padding: '8px 20px',
+                borderRadius: '30px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                display: 'inline-block',
+                marginBottom: '10px',
+              }}
+            >
+              {title}
+            </div>
           </div>
-        </div>
+        )}
         <div 
           className="stats-grid"
           style={{

@@ -5,6 +5,10 @@ import FeaturedBrandsBlock from './blocks/FeaturedBrandsBlock';
 import FeaturedNewsBlock from './blocks/FeaturedNewsBlock';
 import WhyAmuulaiBlock from './blocks/WhyAmuulaiBlock';
 import OurValuesBlock from './blocks/OurValuesBlock';
+import WhoAreWeBlock from './blocks/WhoAreWeBlock';
+import TimelineBlock from './blocks/TimelineBlock';
+import VisionMissionBlock from './blocks/VisionMissionBlock';
+import TeamSectionBlock from './blocks/TeamSectionBlock';
 
 import HeroVideo from './HeroVideo';
 
@@ -52,6 +56,25 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
           case 'sections.stats':
             return <ImpactStatsBlock key={key} data={block} />;
 
+          case 'components.who-are-we-section':
+          case 'sections.who-are-we':
+          case 'blocks.who-are-we':
+          case 'components.who-are-we':
+            return <WhoAreWeBlock key={key} data={block} />;
+
+          case 'components.timeline-section':
+          case 'components.timeline':
+          case 'sections.timeline':
+          case 'blocks.timeline':
+          case 'shared.timeline':
+            return <TimelineBlock key={key} data={block} />;
+
+          case 'components.vision-mission-section':
+          case 'sections.vision-mission':
+          case 'blocks.vision-mission':
+          case 'components.vision-mission':
+            return <VisionMissionBlock key={key} data={block} />;
+
           case 'components.tabs-section':
           case 'sections.business-tabs':
           case 'sections.businesses':
@@ -75,6 +98,14 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
           case 'components.our-values-section':
           case 'sections.our-values':
             return <OurValuesBlock key={key} data={block} />;
+
+          case 'components.team-section':
+          case 'sections.team-section':
+          case 'blocks.team-section':
+          case 'components.team':
+          case 'sections.team':
+          case 'blocks.team':
+            return <TeamSectionBlock key={key} data={block} />;
 
           default:
             console.warn(`Unrecognized Strapi block component: ${block.__component}`);

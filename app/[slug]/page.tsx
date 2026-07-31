@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BlockManager from '@/components/BlockManager';
-import { getPageBySlug, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia } from '@/lib/api';
+import { getPageBySlug, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia, parseStrapiText } from '@/lib/api';
 
 interface DynamicPageProps {
   params: Promise<{
@@ -42,10 +42,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   const imageUrl = rawImage ? getStrapiMedia(rawImage) : null;
 
   // Extract Content/Description from Strapi (if any)
-  let contentText = typeof attrs?.description === 'string' ? attrs.description : (attrs?.content || '');
-  if (Array.isArray(contentText)) {
-    contentText = contentText.map((block: any) => block.children?.map((c: any) => c.text).join('')).join('\n\n');
-  }
+  const contentText = parseStrapiText(attrs?.description || attrs?.content);
 
   // Extract Dynamic Blocks from Strapi if present
   const blocks = pageData?.blocks || attrs?.blocks || [];

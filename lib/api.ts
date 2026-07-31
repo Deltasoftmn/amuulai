@@ -11,6 +11,22 @@ export function getStrapiMedia(url: string | null | undefined): string {
   return `${STRAPI_BASE_URL}${url}`;
 }
 
+export function parseStrapiText(value: any): string {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  if (Array.isArray(value)) {
+    return value.map(b => parseStrapiText(b)).filter(Boolean).join('\n');
+  }
+  if (typeof value === 'object') {
+    if (typeof value.text === 'string') return value.text;
+    if (Array.isArray(value.children)) {
+      return value.children.map((c: any) => parseStrapiText(c)).join('');
+    }
+  }
+  return '';
+}
+
 export async function fetchStrapiAPI<T>(
   path: string,
   urlParamsObject: Record<string, any> = {},
@@ -32,6 +48,22 @@ export async function fetchStrapiAPI<T>(
 
     if (!response.ok) {
       console.warn(`Strapi API Fetch Warning [${response.status}]: ${requestUrl}`);
+      // Fallback: If query with specific populate failed with 400, retry with wildcard populate
+      if (response.status === 400 && Object.keys(urlParamsObject).length > 0) {
+        const fallbackParams: Record<string, any> = {};
+        if (urlParamsObject['filters[slug][$eq]']) {
+          fallbackParams['filters[slug][$eq]'] = urlParamsObject['filters[slug][$eq]'];
+        }
+        fallbackParams['populate[blocks][populate]'] = '*';
+        fallbackParams['populate'] = '*';
+
+        const fallbackQs = new URLSearchParams(fallbackParams).toString().replace(/%5B/g, '[').replace(/%5D/g, ']');
+        const fallbackUrl = `${STRAPI_API_URL}${path}${fallbackQs ? `?${fallbackQs}` : ''}`;
+        const fallbackRes = await fetch(fallbackUrl, mergedOptions);
+        if (fallbackRes.ok) {
+          return await fallbackRes.json();
+        }
+      }
       return null;
     }
 
@@ -50,7 +82,11 @@ export async function getGlobalSettings() {
 
 export async function getHomePageData() {
   const res = await fetchStrapiAPI<any>('/home', {
+    'populate[blocks][populate]': '*',
     'populate[blocks][on][components.slider][populate]': '*',
+    'populate[blocks][on][components.who-are-we][populate]': '*',
+    'populate[blocks][on][components.timeline-section][populate][events][populate]': '*',
+    'populate[blocks][on][components.vision-mission-section][populate][cards][populate]': '*',
     'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
     'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
     'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
@@ -59,6 +95,7 @@ export async function getHomePageData() {
     'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
     'populate[blocks][on][components.tabs-section][populate][tabs][populate][brands][populate]': '*',
     'populate[blocks][on][components.featured-news-section][populate]': '*',
+    'populate[blocks][on][components.team-section][populate][groups][populate][members][populate]': '*',
   });
   return res?.data?.blocks || res?.data?.attributes?.blocks || null;
 }
@@ -134,23 +171,36 @@ export async function getBusinessBySlug(slug: string) {
 
 export async function getPageBySlug(slug: string) {
   try {
-    const res = await fetchStrapiAPI<any>('/pages', {
+    const params = {
       'filters[slug][$eq]': slug,
-      'populate[blocks][on][components.product-category-block][populate][brands][populate]': '*',
-      'populate[blocks][on][components.product-category-block][populate][featuredImage][populate]': '*',
+      'populate[blocks][populate]': '*',
       'populate[blocks][on][components.slider][populate]': '*',
+      'populate[blocks][on][components.who-are-we][populate]': '*',
+      'populate[blocks][on][components.timeline-section][populate][events][populate]': '*',
+      'populate[blocks][on][components.vision-mission-section][populate][cards][populate]': '*',
       'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
       'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
       'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
       'populate[blocks][on][components.our-values-section][populate][leftImage][populate]': '*',
       'populate[blocks][on][components.our-values-section][populate][values][populate]': '*',
       'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
-      'populate[blocks][on][components.tabs-section][populate][tabs][populate]': '*',
+      'populate[blocks][on][components.tabs-section][populate][tabs][populate][brands][populate]': '*',
       'populate[blocks][on][components.featured-news-section][populate]': '*',
+      'populate[blocks][on][components.team-section][populate][groups][populate][members][populate]': '*',
       'populate[FeaturedImage][populate]': '*',
-    });
+    };
+
+    let res = await fetchStrapiAPI<any>('/pages', params);
     if (res?.data && res.data.length > 0) {
       return res.data[0];
+    }
+
+    // Alias fallbacks for common routes (e.g. 'about', 'who-are-we', 'bidnii-tuhai')
+    if (slug === 'about' || slug === 'who-are-we' || slug === 'bidnii-tuhai') {
+      res = await fetchStrapiAPI<any>('/pages', { ...params, 'filters[slug][$eq]': 'about-us' });
+      if (res?.data && res.data.length > 0) {
+        return res.data[0];
+      }
     }
   } catch (err) {
     console.error('Error fetching page by slug:', err);
