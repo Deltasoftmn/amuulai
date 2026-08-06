@@ -231,13 +231,13 @@ export default function ProductCatalog({
                 key={product.id}
                 className="group flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-2"
               >
-                {/* Product Image Container */}
-                <div className="relative w-full h-[210px] bg-slate-50/80 rounded-2xl flex items-center justify-center p-4 mb-3 border border-slate-100/90 group-hover:border-emerald-300 group-hover:shadow-lg group-hover:shadow-emerald-500/10 group-hover:bg-white transition-all duration-500 overflow-hidden">
+                {/* Product Image Container (Flat sharp box with full cover image fill) */}
+                <div className="relative w-full h-[240px] bg-slate-50 flex items-center justify-center mb-3 border border-slate-100 group-hover:border-emerald-300 group-hover:shadow-lg transition-all duration-500 overflow-hidden rounded-none">
                   {product.image ? (
                     <img
                       src={product.image}
                       alt={product.title}
-                      className="max-h-[175px] max-w-full object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 text-slate-400">
