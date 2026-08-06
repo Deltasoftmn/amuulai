@@ -32,7 +32,7 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
   const title = data?.title || data?.categoryName || 'Ахуйн бараа';
   const description = data?.description || data?.excerpt || 'Анунгоо ХХК нь 1999 оноос хойш Монгол Улсын худалдааны зах зээлд амжилттай үйл ажиллагаа явуулж, хэрэглэгчид болон харилцагчдынхаа итгэлийг тууштайгаар хүлээн ирсэн билээ.';
   const buttonText = data?.buttonText || 'Дэлгэрэнгүй';
-  const buttonUrl = data?.buttonUrl || data?.link || '#';
+  const buttonUrl = data?.buttonUrl || data?.url || data?.link || '/products';
 
   // Determine alternating side (Even index = Image Left, Odd index = Image Right)
   const isImageLeft = index % 2 === 1;

@@ -33,7 +33,10 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
   };
 
   const featuredLogos = Array.isArray(brand.featuredLogos)
-    ? brand.featuredLogos.map((l: any) => getStrapiMedia(l.url)).filter(Boolean)
+    ? brand.featuredLogos.map((l: any) => {
+        const u = typeof l === 'string' ? l : (l?.url || l?.attributes?.url);
+        return u ? getStrapiMedia(u) : '';
+      }).filter(Boolean)
     : [];
 
   const brandsData = (brandsRaw || []).map((b: any) => {

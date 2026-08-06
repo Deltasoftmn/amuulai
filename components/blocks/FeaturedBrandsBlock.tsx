@@ -10,8 +10,24 @@ interface FeaturedBrandsBlockProps {
 }
 
 export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) {
+  const [brandsData, setBrandsData] = React.useState<any[]>(Array.isArray(data?.brands) ? data.brands : []);
+
+  React.useEffect(() => {
+    // If block data from page doesn't have brands or featuredLogos populated, fetch directly from Strapi getBrands()
+    const needsFetch = !Array.isArray(data?.brands) || data.brands.length === 0 || data.brands.every((b: any) => !b.featuredLogos || b.featuredLogos.length === 0);
+    if (needsFetch) {
+      import('@/lib/api').then(({ getBrands }) => {
+        getBrands().then((resBrands: any[]) => {
+          if (Array.isArray(resBrands) && resBrands.length > 0) {
+            setBrandsData(resBrands);
+          }
+        });
+      });
+    }
+  }, [data?.brands]);
+
   const badgeText = data?.badgeText || 'Брэндүүд';
-  const brandList = Array.isArray(data?.brands) ? data.brands : [];
+  const brandList = brandsData.length > 0 ? brandsData : (Array.isArray(data?.brands) ? data.brands : []);
 
   if (brandList.length === 0) {
     return null;
@@ -24,6 +40,35 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
           <div className="section-badge" style={{ background: 'rgba(0, 130, 157, 0.1)', color: '#00829d', padding: '6px 16px', borderRadius: '30px', fontSize: '14px', fontWeight: 'bold', display: 'inline-block', marginBottom: '15px' }}>
             {badgeText}
           </div>
+          {data?.title && data.title !== badgeText && (
+            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#0f172a', margin: '0 0 16px 0' }}>
+              {data.title}
+            </h2>
+          )}
+          {data?.buttonUrl && (
+            <div style={{ marginTop: '12px' }}>
+              <Link 
+                href={data.buttonUrl.startsWith('/') ? data.buttonUrl : `/${data.buttonUrl}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: '#00829d',
+                  color: '#ffffff',
+                  padding: '12px 28px',
+                  borderRadius: '30px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(0, 130, 157, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                className="hover:scale-105 hover:bg-[#006e85]"
+              >
+                {data.buttonText || 'Дэлгэрэнгүй танилцах'} &rarr;
+              </Link>
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
@@ -41,10 +86,8 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
                 .filter(Boolean);
             }
 
-            // Up to maximum 6 visible logos
-            const visibleLogos = strapiLogos.length > 0
-              ? strapiLogos.slice(0, 6)
-              : [0, 1, 2, 3].map((subId) => `/images/brands/brand_${i % 8}_${subId}.png`);
+            // Strictly visible logos from Strapi (no fake image fallbacks)
+            const visibleLogos = strapiLogos.slice(0, 6);
 
             // Calculate remaining count (+X logos/brands)
             const remainingCount = strapiLogos.length > 6 ? (strapiLogos.length - 6) : 0;
@@ -116,9 +159,18 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
                       +{extraCount} брэнд
                     </span>
                   )}
-                  <Link href={`/brands/${brand.slug || 'brand'}`} style={{ color: '#00829d', fontSize: '14px', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    {data?.buttonText || 'Дэлгэрэнгүй'} <span style={{ fontSize: '16px' }}>&rarr;</span>
-                  </Link>
+                  {(() => {
+                    const rawUrl = brand.buttonUrl || brand.url || brand.link || data?.buttonUrl;
+                    const cardUrl = rawUrl 
+                      ? (rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`) 
+                      : '/brand';
+                    const cardText = brand.buttonText || 'Дэлгэрэнгүй';
+                    return (
+                      <Link href={cardUrl} style={{ color: '#00829d', fontSize: '14px', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        {cardText} <span style={{ fontSize: '16px' }}>&rarr;</span>
+                      </Link>
+                    );
+                  })()}
                 </div>
               </div>
             );

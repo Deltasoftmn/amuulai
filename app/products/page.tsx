@@ -20,12 +20,13 @@ export default async function ProductsPage() {
 
   // Pre-process brands on the server (resolve image URLs here, not on client)
   const brandsData = (brandsRaw || []).map((b: any) => {
-    const logoUrl = b.logo?.url || b.featuredLogos?.[0]?.url || b.image?.url || null;
+    const rawLogoObj = b.logo || b.featuredLogos?.[0] || b.image || b.coverImage;
+    const rawLogo = typeof rawLogoObj === 'string' ? rawLogoObj : (rawLogoObj?.url || rawLogoObj?.data?.attributes?.url);
     return {
       id: b.id,
       title: b.title || b.name || 'Brand',
       slug: b.slug || '',
-      logoUrl: logoUrl ? getStrapiMedia(logoUrl) : null,
+      logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
     };
   });
 
@@ -39,6 +40,7 @@ export default async function ProductsPage() {
       image: imageUrl ? getStrapiMedia(imageUrl) : null,
       brandSlug: p.brand?.slug || p.brand?.name?.toLowerCase() || '',
       brandName: p.brand?.title || p.brand?.name || '',
+      brandId: p.brand?.id || null,
     };
   });
 

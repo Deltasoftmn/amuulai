@@ -144,9 +144,8 @@ export async function getBrandBySlug(slug: string) {
 export async function getProducts(brandSlug?: string) {
   try {
     const params: any = {
-      populate: '*',
-      'populate[image][populate]': '*',
-      'populate[brand][populate]': '*',
+      'populate[0]': 'brand',
+      'populate[1]': 'image',
     };
     if (brandSlug && brandSlug !== 'all') {
       params['filters[brand][slug][$eq]'] = brandSlug;
