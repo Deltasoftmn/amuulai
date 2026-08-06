@@ -9,6 +9,7 @@ interface ProductCatalogProps {
   initialProducts?: any[];
   categoryTitle?: string;
   hideHeaderTitle?: boolean;
+  selectedBrandSlug?: string;
 }
 
 function findImageInObject(obj: any): string | null {
@@ -53,9 +54,10 @@ export default function ProductCatalog({
   initialBrands = [], 
   initialProducts = [],
   categoryTitle = 'Хүнс',
-  hideHeaderTitle = false
+  hideHeaderTitle = false,
+  selectedBrandSlug: initialSelectedBrandSlug = 'all'
 }: ProductCatalogProps) {
-  const [selectedBrandSlug, setSelectedBrandSlug] = useState<string>('all');
+  const [selectedBrandSlug, setSelectedBrandSlug] = useState<string>(initialSelectedBrandSlug);
   const [brands, setBrands] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
 

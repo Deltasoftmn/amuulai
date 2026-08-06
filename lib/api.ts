@@ -1,6 +1,6 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://amuulai.deltasoft.website';
+const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://admin.deltasoft.website';
 const STRAPI_API_URL = `${STRAPI_BASE_URL}/api`;
 
 export function getStrapiMedia(url: string | null | undefined): string {
@@ -83,19 +83,6 @@ export async function getGlobalSettings() {
 export async function getHomePageData() {
   const res = await fetchStrapiAPI<any>('/home', {
     'populate[blocks][populate]': '*',
-    'populate[blocks][on][components.slider][populate]': '*',
-    'populate[blocks][on][components.who-are-we][populate]': '*',
-    'populate[blocks][on][components.timeline-section][populate][events][populate]': '*',
-    'populate[blocks][on][components.vision-mission-section][populate][cards][populate]': '*',
-    'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
-    'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
-    'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
-    'populate[blocks][on][components.our-values-section][populate][leftImage][populate]': '*',
-    'populate[blocks][on][components.our-values-section][populate][values][populate]': '*',
-    'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
-    'populate[blocks][on][components.tabs-section][populate][tabs][populate][brands][populate]': '*',
-    'populate[blocks][on][components.featured-news-section][populate]': '*',
-    'populate[blocks][on][components.team-section][populate][groups][populate][members][populate]': '*',
   });
   return res?.data?.blocks || res?.data?.attributes?.blocks || null;
 }
@@ -139,8 +126,19 @@ export async function getFooterMenu() {
 }
 
 export async function getBrands() {
-  const res = await fetchStrapiAPI<any>('/brands', { populate: 'featuredLogos' });
+  const res = await fetchStrapiAPI<any>('/brands', { populate: '*' });
   return res?.data || [];
+}
+
+export async function getBrandBySlug(slug: string) {
+  const res = await fetchStrapiAPI<any>('/brands', {
+    'filters[slug][$eq]': slug,
+    populate: '*',
+  });
+  if (res?.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  return null;
 }
 
 export async function getProducts(brandSlug?: string) {
@@ -174,20 +172,7 @@ export async function getPageBySlug(slug: string) {
     const params = {
       'filters[slug][$eq]': slug,
       'populate[blocks][populate]': '*',
-      'populate[blocks][on][components.slider][populate]': '*',
-      'populate[blocks][on][components.who-are-we][populate]': '*',
-      'populate[blocks][on][components.timeline-section][populate][events][populate]': '*',
-      'populate[blocks][on][components.vision-mission-section][populate][cards][populate]': '*',
-      'populate[blocks][on][shared.impact-section][populate][Statistics][populate]': '*',
-      'populate[blocks][on][components.why-choose-us-section][populate][features][populate]': '*',
-      'populate[blocks][on][components.why-choose-us-section][populate][coverImage][populate]': '*',
-      'populate[blocks][on][components.our-values-section][populate][leftImage][populate]': '*',
-      'populate[blocks][on][components.our-values-section][populate][values][populate]': '*',
-      'populate[blocks][on][components.brands-section][populate][brands][populate]': '*',
-      'populate[blocks][on][components.tabs-section][populate][tabs][populate][brands][populate]': '*',
-      'populate[blocks][on][components.featured-news-section][populate]': '*',
-      'populate[blocks][on][components.team-section][populate][groups][populate][members][populate]': '*',
-      'populate[FeaturedImage][populate]': '*',
+      'populate[FeaturedImage]': 'true',
     };
 
     let res = await fetchStrapiAPI<any>('/pages', params);
@@ -195,7 +180,15 @@ export async function getPageBySlug(slug: string) {
       return res.data[0];
     }
 
-    // Alias fallbacks for common routes (e.g. 'about', 'who-are-we', 'bidnii-tuhai')
+    // Alias fallbacks for common routes (e.g. 'brands' <-> 'brand', 'about' <-> 'about-us')
+    if (slug === 'brands' || slug === 'brand') {
+      const altSlug = slug === 'brands' ? 'brand' : 'brands';
+      res = await fetchStrapiAPI<any>('/pages', { ...params, 'filters[slug][$eq]': altSlug });
+      if (res?.data && res.data.length > 0) {
+        return res.data[0];
+      }
+    }
+
     if (slug === 'about' || slug === 'who-are-we' || slug === 'bidnii-tuhai') {
       res = await fetchStrapiAPI<any>('/pages', { ...params, 'filters[slug][$eq]': 'about-us' });
       if (res?.data && res.data.length > 0) {

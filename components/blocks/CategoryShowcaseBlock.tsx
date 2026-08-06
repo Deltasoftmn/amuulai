@@ -49,12 +49,13 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
   let brandLogos: any[] = [];
   if (Array.isArray(rawBrands) && rawBrands.length > 0) {
     rawBrands.forEach((b: any) => {
+      const bTitle = b.title || b.name || '';
       if (Array.isArray(b.featuredLogos) && b.featuredLogos.length > 0) {
         b.featuredLogos.forEach((logoObj: any) => {
-          const lUrl = logoObj?.url;
+          const lUrl = typeof logoObj === 'string' ? logoObj : (logoObj?.url || logoObj?.attributes?.url);
           if (lUrl) {
             brandLogos.push({
-              name: b.title || b.name || 'Brand',
+              name: bTitle || 'Brand',
               url: getStrapiMedia(lUrl)
             });
           }
@@ -63,17 +64,61 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
         const logoUrl = b.logo?.url || b.featuredLogos?.url || b.url || b.image?.url || b.logoUrl;
         if (logoUrl) {
           brandLogos.push({
-            name: b.name || b.title || 'Brand',
+            name: bTitle || 'Brand',
             url: getStrapiMedia(logoUrl)
+          });
+        } else if (bTitle) {
+          brandLogos.push({
+            name: bTitle,
+            url: null
           });
         }
       }
     });
   }
 
-  if (brandLogos.length === 0) {
-    brandLogos = defaultLogos;
-  }
+  const [enrichedLogos, setEnrichedLogos] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (Array.isArray(rawBrands) && rawBrands.length > 0) {
+      const needsLogos = rawBrands.some((b: any) => !b.featuredLogos || b.featuredLogos.length === 0);
+      if (needsLogos) {
+        import('@/lib/api').then(({ getBrands, getStrapiMedia }) => {
+          getBrands().then((allBrands: any[]) => {
+            const resultLogos: any[] = [];
+            rawBrands.forEach((b: any) => {
+              const bSlug = (b.slug || b.title || b.name || '').toLowerCase();
+              const matched = allBrands.find((fb: any) => 
+                (fb.slug && fb.slug.toLowerCase() === bSlug) || 
+                (fb.title && fb.title.toLowerCase() === bSlug) ||
+                fb.id === b.id
+              );
+              const bTitle = matched?.title || b.title || b.name || '';
+              const fLogos = matched?.featuredLogos || b.featuredLogos || [];
+              if (Array.isArray(fLogos) && fLogos.length > 0) {
+                fLogos.forEach((logoObj: any) => {
+                  const lUrl = typeof logoObj === 'string' ? logoObj : (logoObj?.url || logoObj?.attributes?.url);
+                  if (lUrl) {
+                    resultLogos.push({
+                      name: bTitle || 'Brand',
+                      url: getStrapiMedia(lUrl)
+                    });
+                  }
+                });
+              } else if (bTitle) {
+                resultLogos.push({ name: bTitle, url: null });
+              }
+            });
+            if (resultLogos.length > 0) {
+              setEnrichedLogos(resultLogos);
+            }
+          });
+        });
+      }
+    }
+  }, [data]);
+
+  const activeLogos = enrichedLogos.length > 0 ? enrichedLogos : brandLogos;
 
   return (
     <section className="section" style={{ padding: '80px 0', backgroundColor: '#ffffff', overflow: 'hidden' }}>
@@ -146,37 +191,50 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
             </Link>
 
             {/* Horizontal Brand Logos Row */}
-            <div 
-              style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                alignItems: 'center', 
-                gap: '24px', 
-                paddingTop: '20px', 
-                borderTop: '1px solid #f3f4f6', 
-                width: '100%' 
-              }}
-            >
-              {brandLogos.map((brand: any, idx: number) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', height: '36px' }}>
-                  {brand.url ? (
-                    <img 
-                      src={brand.url} 
-                      alt={brand.name} 
-                      style={{ maxHeight: '36px', maxWidth: '85px', objectFit: 'contain', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }} 
-                      className="hover:scale-[1.2]"
-                    />
-                  ) : (
+            {activeLogos.length > 0 && (
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  alignItems: 'center', 
+                  gap: '24px', 
+                  paddingTop: '20px', 
+                  borderTop: '1px solid #f3f4f6', 
+                  width: '100%' 
+                }}
+              >
+                {activeLogos.map((brand: any, idx: number) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', minHeight: '36px' }}>
+                    {brand.url ? (
+                      <img 
+                        src={brand.url} 
+                        alt={brand.name} 
+                        style={{ maxHeight: '38px', maxWidth: '100px', objectFit: 'contain', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }} 
+                        className="hover:scale-[1.12]"
+                        onError={(e: any) => {
+                          e.currentTarget.style.display = 'none';
+                          const nextEl = e.currentTarget.nextElementSibling;
+                          if (nextEl) nextEl.style.display = 'inline-block';
+                        }}
+                      />
+                    ) : null}
                     <span 
-                      style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
-                      className="hover:scale-[1.2]"
+                      style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '700', 
+                        color: '#4b5563', 
+                        display: brand.url ? 'none' : 'inline-block',
+                        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+                        cursor: 'pointer' 
+                      }}
+                      className="hover:scale-[1.08] hover:text-[#00829d]"
                     >
                       {brand.name}
                     </span>
-                  )}
-                </div>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
           </div>
 
