@@ -15,6 +15,7 @@ const defaultConsumerBusinesses = [
     slug: "mild-cosmetics",
     desc: "Японы гоо сайхан, арьс арчилгааны сүлжээ дэлгүүр",
     logoUrl: "/mild.png",
+    image: "/images/who_are_we_mild.jpg",
     bgTint: "rgba(255, 240, 245, 0.7)"
   },
   {
@@ -22,6 +23,7 @@ const defaultConsumerBusinesses = [
     slug: "genki-drugstore",
     desc: "Япон гар ахуй, хүнс, эрүүл мэндийн бүтээгдэхүүний сүлжээ",
     logoUrl: "/genki.png",
+    image: "/images/who_are_we_genki.jpg",
     bgTint: "rgba(232, 244, 248, 0.7)"
   },
   {
@@ -29,6 +31,7 @@ const defaultConsumerBusinesses = [
     slug: "oeo",
     desc: "Гар урлал, бүтээлч хоббиг дэмжигч төрөлжсөн дэлгүүр",
     logoUrl: "/oo.png",
+    image: "/images/who_are_we_oeo.jpg",
     bgTint: "rgba(244, 244, 246, 0.7)"
   }
 ];
@@ -39,6 +42,7 @@ const defaultDistributionBusinesses = [
     slug: "ton",
     desc: "Олон улсын хүнс, өргөн хэрэглээний барааны дистрибьюшн сүлжээ",
     logoUrl: "/Ton.png",
+    image: "/images/who_are_we_ton618.jpg",
     bgTint: "rgba(240, 244, 248, 0.7)"
   },
   {
@@ -46,6 +50,7 @@ const defaultDistributionBusinesses = [
     slug: "ikigai",
     desc: "Сургалт, хүний хөгжил, байгууллагын хөгжлийн төв",
     logoUrl: "/ikigai.png",
+    image: "/images/subsidiary_care.png",
     bgTint: "rgba(244, 248, 240, 0.7)"
   }
 ];
@@ -59,6 +64,16 @@ function getBrandFallbackLogo(titleStr?: string): string {
   if (t.includes('ikigai')) return '/ikigai.png';
   if (t.includes('amuulai')) return '/logo.png';
   return '/logo.png';
+}
+
+function getBrandFallbackImage(titleStr?: string): string {
+  const t = (titleStr || '').toLowerCase();
+  if (t.includes('mild')) return '/images/who_are_we_mild.jpg';
+  if (t.includes('genki')) return '/images/who_are_we_genki.jpg';
+  if (t.includes('oeo') || t.includes('oo')) return '/images/who_are_we_oeo.jpg';
+  if (t.includes('ton')) return '/images/who_are_we_ton618.jpg';
+  if (t.includes('ikigai')) return '/images/subsidiary_care.png';
+  return '/images/who_are_we_main.jpg';
 }
 
 export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
@@ -160,12 +175,18 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
             const fullLogoPath = logoUrl 
               ? (logoUrl.startsWith('/') && !logoUrl.startsWith('/uploads') ? logoUrl : getStrapiMedia(logoUrl))
               : getBrandFallbackLogo(brand.title);
+
+            const rawImage = brand.image?.url || brand.image?.data?.attributes?.url || brand.image || brand.coverImage?.url || brand.coverImage || brand.photo || brand.picture;
+            const displayImage = rawImage 
+              ? (typeof rawImage === 'string' && rawImage.startsWith('/') && !rawImage.startsWith('/uploads') ? rawImage : getStrapiMedia(rawImage))
+              : getBrandFallbackImage(brand.title);
+
             const slug = brand.slug || brand.title?.toLowerCase().replace(/\s+/g, '-') || 'business';
 
             return (
               <div 
                 key={brand.id || idx} 
-                className="branch-card"
+                className="branch-card group"
                 style={{
                   background: '#ffffff',
                   borderRadius: '20px',
@@ -177,27 +198,61 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                 }}
               >
-                {/* Patterned/Tinted Header */}
+                {/* Full-bleed Cover Image Header */}
                 <div 
                   style={{ 
-                    height: '190px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '24px',
+                    height: '210px',
+                    width: '100%',
                     position: 'relative',
-                    background: `linear-gradient(rgba(240, 248, 250, 0.78), rgba(240, 248, 250, 0.78)), url('/pattern2.png') center/cover no-repeat`,
-                    backgroundColor: brand.bgTint || '#f0f8fa',
-                    borderBottom: '1px solid #f1f5f9'
+                    overflow: 'hidden',
+                    backgroundColor: '#f1f5f9'
                   }}
                 >
                   <Image
-                    src={fullLogoPath}
+                    src={displayImage}
                     alt={brand.title || 'Brand'}
-                    width={180}
-                    height={80}
-                    style={{ objectFit: "contain", maxHeight: "80px", maxWidth: "85%" }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
+                  
+                  {/* Subtle dark gradient overlay at bottom for smooth contrast */}
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.25) 0%, transparent 60%)'
+                    }}
+                  />
+
+                  {/* Glassmorphism Logo Badge overlay */}
+                  {fullLogoPath && fullLogoPath !== displayImage && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '14px',
+                        right: '14px',
+                        background: 'rgba(255, 255, 255, 0.92)',
+                        backdropFilter: 'blur(8px)',
+                        padding: '6px 14px',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        maxHeight: '42px'
+                      }}
+                    >
+                      <Image
+                        src={fullLogoPath}
+                        alt={`${brand.title} logo`}
+                        width={80}
+                        height={30}
+                        style={{ objectFit: 'contain', maxHeight: '26px', width: 'auto' }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Body */}

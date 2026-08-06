@@ -18,6 +18,8 @@ interface TimelineBlockProps {
 }
 
 export default function TimelineBlock({ data }: TimelineBlockProps) {
+  const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
+
   const badgeText = parseStrapiText(data?.badgeText || data?.subtitle) || 'БИДНИЙ ТҮҮХ';
   const title = parseStrapiText(data?.title || data?.heading) || 'Бидний түүх';
   const description = parseStrapiText(data?.description || data?.text) || 
@@ -227,34 +229,55 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
               marginBottom: '12px'
             }}
           >
-            {items.map((item, idx) => (
-              <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <span 
+            {items.map((item, idx) => {
+              const isHovered = hoveredIdx === idx;
+              return (
+                <div 
+                  key={idx} 
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
                   style={{ 
-                    fontSize: '22px', 
-                    fontWeight: '800', 
-                    color: '#1d4ed8',
-                    letterSpacing: '-0.01em'
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    padding: '6px 0',
+                    userSelect: 'none'
                   }}
                 >
-                  {item.year}
-                </span>
-                {item.subText && (
                   <span 
                     style={{ 
-                      fontSize: '11px', 
-                      fontWeight: '700', 
-                      color: '#475569', 
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      marginTop: '2px'
+                      fontSize: '24px', 
+                      fontWeight: '800', 
+                      color: isHovered ? '#2563eb' : '#1d4ed8',
+                      letterSpacing: '-0.01em',
+                      transform: isHovered ? 'scale(1.22)' : 'scale(1)',
+                      transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      display: 'inline-block',
+                      textShadow: isHovered ? '0 4px 16px rgba(37, 99, 235, 0.45)' : 'none',
+                      filter: isHovered ? 'brightness(1.2)' : 'none'
                     }}
                   >
-                    {item.subText}
+                    {item.year}
                   </span>
-                )}
-              </div>
-            ))}
+                  {item.subText && (
+                    <span 
+                      style={{ 
+                        fontSize: '11px', 
+                        fontWeight: '700', 
+                        color: isHovered ? '#2563eb' : '#475569', 
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        marginTop: '2px',
+                        transition: 'color 0.3s ease'
+                      }}
+                    >
+                      {item.subText}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* CURVED TIMELINE CONNECTOR LINE (SVG) */}
@@ -295,8 +318,33 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
               {items.map((_, i) => {
                 const posX = 100 + i * (900 / Math.max(items.length - 1, 1));
                 const posY = i % 2 === 0 ? 20 : 25;
+                const isHovered = hoveredIdx === i;
                 return (
-                  <circle key={i} cx={posX} cy={posY} r="5" fill="#ffffff" stroke="#3b82f6" strokeWidth="3" />
+                  <g 
+                    key={i} 
+                    onMouseEnter={() => setHoveredIdx(i)} 
+                    onMouseLeave={() => setHoveredIdx(null)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {isHovered && (
+                      <circle 
+                        cx={posX} 
+                        cy={posY} 
+                        r="12" 
+                        fill="rgba(37, 99, 235, 0.25)" 
+                        style={{ transition: 'all 0.3s ease' }} 
+                      />
+                    )}
+                    <circle 
+                      cx={posX} 
+                      cy={posY} 
+                      r={isHovered ? "7" : "5"} 
+                      fill={isHovered ? "#2563eb" : "#ffffff"} 
+                      stroke="#3b82f6" 
+                      strokeWidth={isHovered ? "4" : "3"} 
+                      style={{ transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+                    />
+                  </g>
                 );
               })}
             </svg>
@@ -312,90 +360,106 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
           }}
           className="fade-in-up"
         >
-          {items.map((item, idx) => (
-            <div 
-              key={idx}
-              style={{ 
-                backgroundColor: '#ffffff',
-                borderRadius: '18px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                position: 'relative'
-              }}
-              className="hover:-translate-y-1 hover:shadow-lg group"
-            >
-              {/* TOP CIRCULAR ICON BADGE */}
+          {items.map((item, idx) => {
+            const isHovered = hoveredIdx === idx;
+            return (
               <div 
+                key={idx}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
                 style={{ 
-                  position: 'absolute',
-                  top: '12px',
-                  left: '12px',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  backgroundColor: '#061830',
-                  color: '#ffffff',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '18px',
+                  border: isHovered ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                  boxShadow: isHovered 
+                    ? '0 16px 32px -8px rgba(37, 99, 235, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05)' 
+                    : '0 4px 20px rgba(0, 0, 0, 0.04)',
+                  overflow: 'hidden',
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  boxShadow: '0 4px 12px rgba(6, 24, 48, 0.3)',
-                  border: '2px solid #ffffff'
+                  flexDirection: 'column',
+                  transform: isHovered ? 'translateY(-10px) scale(1.03)' : 'translateY(0) scale(1)',
+                  transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease',
+                  position: 'relative',
+                  cursor: 'pointer'
                 }}
               >
-                {renderIcon(item.icon)}
-              </div>
-
-              {/* IMAGE CONTAINER */}
-              <div 
-                style={{ 
-                  position: 'relative', 
-                  width: '100%', 
-                  height: '145px',
-                  overflow: 'hidden'
-                }}
-              >
-                <Image 
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 1024px) 50vw, 16vw"
-                  className="transition-transform duration-500 group-hover:scale-108"
-                />
-              </div>
-
-              {/* CARD CONTENT */}
-              <div style={{ padding: '16px 14px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 
+                {/* TOP CIRCULAR ICON BADGE */}
+                <div 
                   style={{ 
-                    fontSize: '15px', 
-                    fontWeight: '700', 
-                    color: '#0f172a', 
-                    margin: '0 0 8px 0',
-                    lineHeight: '1.3'
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    backgroundColor: isHovered ? '#2563eb' : '#061830',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10,
+                    boxShadow: isHovered ? '0 6px 18px rgba(37, 99, 235, 0.45)' : '0 4px 12px rgba(6, 24, 48, 0.3)',
+                    border: '2px solid #ffffff',
+                    transform: isHovered ? 'scale(1.12)' : 'scale(1)',
+                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
                   }}
                 >
-                  {item.title}
-                </h3>
-                <p 
+                  {renderIcon(item.icon)}
+                </div>
+
+                {/* IMAGE CONTAINER WITH ZOOM IN & COLOR BRIGHTENING ANIMATION */}
+                <div 
                   style={{ 
-                    fontSize: '12px', 
-                    color: '#64748b', 
-                    lineHeight: '1.55', 
-                    margin: 0,
-                    fontWeight: '400'
+                    position: 'relative', 
+                    width: '100%', 
+                    height: '145px',
+                    overflow: 'hidden'
                   }}
                 >
-                  {item.desc}
-                </p>
+                  <Image 
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    style={{ 
+                      objectFit: 'cover',
+                      transform: isHovered ? 'scale(1.18)' : 'scale(1.0)',
+                      filter: isHovered ? 'brightness(1.12) contrast(1.06) saturate(1.1)' : 'brightness(0.92) contrast(0.98)',
+                      transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease'
+                    }}
+                    sizes="(max-width: 1024px) 50vw, 16vw"
+                  />
+                </div>
+
+                {/* CARD CONTENT */}
+                <div style={{ padding: '16px 14px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                  <h3 
+                    style={{ 
+                      fontSize: '15px', 
+                      fontWeight: '700', 
+                      color: isHovered ? '#2563eb' : '#0f172a', 
+                      margin: '0 0 8px 0',
+                      lineHeight: '1.3',
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p 
+                    style={{ 
+                      fontSize: '12px', 
+                      color: isHovered ? '#334155' : '#64748b', 
+                      lineHeight: '1.55', 
+                      margin: 0,
+                      fontWeight: '400',
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>
@@ -416,3 +480,4 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
     </section>
   );
 }
+
