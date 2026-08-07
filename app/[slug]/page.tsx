@@ -42,7 +42,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   const imageUrl = rawImage ? getStrapiMedia(rawImage) : null;
 
   // Extract Content/Description from Strapi (if any)
-  const contentText = parseStrapiText(attrs?.description || attrs?.content);
+  const contentText = parseStrapiText(attrs?.description || attrs?.content || attrs?.body || attrs?.details || attrs?.text);
 
   // Extract Dynamic Blocks from Strapi if present
   const blocks = pageData?.blocks || attrs?.blocks || [];

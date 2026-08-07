@@ -41,33 +41,9 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
             {badgeText}
           </div>
           {data?.title && data.title !== badgeText && (
-            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#0f172a', margin: '0 0 16px 0' }}>
+            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#0f172a', margin: '0' }}>
               {data.title}
             </h2>
-          )}
-          {data?.buttonUrl && (
-            <div style={{ marginTop: '12px' }}>
-              <Link 
-                href={data.buttonUrl.startsWith('/') ? data.buttonUrl : `/${data.buttonUrl}`}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  backgroundColor: '#00829d',
-                  color: '#ffffff',
-                  padding: '12px 28px',
-                  borderRadius: '30px',
-                  fontWeight: '700',
-                  fontSize: '14px',
-                  textDecoration: 'none',
-                  boxShadow: '0 4px 14px rgba(0, 130, 157, 0.3)',
-                  transition: 'all 0.3s ease'
-                }}
-                className="hover:scale-105 hover:bg-[#006e85]"
-              >
-                {data.buttonText || 'Дэлгэрэнгүй танилцах'} &rarr;
-              </Link>
-            </div>
           )}
         </div>
 
@@ -96,27 +72,34 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
             // Dynamic grid layout (2 or 3 columns depending on count)
             const gridCols = visibleLogos.length <= 2 || visibleLogos.length === 4 ? 2 : 3;
 
+            const rawUrl = brand.buttonUrl || brand.url || brand.link || data?.buttonUrl;
+            const cardUrl = rawUrl 
+              ? (rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`) 
+              : '/brands';
+
             return (
-              <div
+              <Link
                 key={brand.id || i}
-                className="premium-brand-card fade-in-up"
+                href={cardUrl}
+                className="premium-brand-card fade-in-up group cursor-pointer transition-all duration-400 ease-out hover:-translate-y-2.5 hover:shadow-2xl hover:border-emerald-200/80"
                 style={{
                   background: '#fff',
                   borderRadius: '24px',
                   padding: '30px',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.04)',
-                  border: '1px solid rgba(0,0,0,0.03)',
-                  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                  border: '1px solid rgba(0,0,0,0.04)',
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative',
                   overflow: 'hidden',
+                  textDecoration: 'none',
+                  color: 'inherit',
                   animationDelay: `${i * 0.1}s`,
                 }}
               >
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #00829d, #00c6e0)' }} />
 
-                <h4 style={{ fontSize: '18px', fontWeight: '800', color: '#111', marginBottom: '20px', textAlign: 'center', letterSpacing: '0.5px' }}>
+                <h4 style={{ fontSize: '18px', fontWeight: '800', color: '#111', marginBottom: '20px', textAlign: 'center', letterSpacing: '0.5px' }} className="group-hover:text-[#00829d] transition-colors">
                   {brand.title || brand.name || 'BRAND'}
                 </h4>
 
@@ -134,16 +117,16 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
                           justifyContent: 'center',
                           height: '80px',
                           border: '1px solid #f1f5f9',
-                          transition: 'background 0.3s',
                         }}
+                        className="group/logo hover:scale-[1.12] hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all duration-300"
                       >
                         <Image
                           src={logoSrc}
                           alt={`${brand.title || 'Brand'} logo ${subId + 1}`}
                           width={100}
                           height={60}
-                          style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', mixBlendMode: 'darken', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
-                          className="hover:scale-[1.2]"
+                          style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', mixBlendMode: 'darken' }}
+                          className="transition-transform duration-300 group-hover/logo:scale-110"
                           onError={(e: any) => {
                             e.currentTarget.style.display = 'none';
                           }}
@@ -153,26 +136,14 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
                   })}
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: extraCount > 0 ? 'space-between' : 'flex-end', alignItems: 'center', marginTop: '25px', paddingTop: '15px', borderTop: '1px solid #f1f5f9' }}>
-                  {extraCount > 0 && (
+                {extraCount > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #f1f5f9' }}>
                     <span style={{ background: '#f1f5f9', color: '#00829d', padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: '700' }}>
                       +{extraCount} брэнд
                     </span>
-                  )}
-                  {(() => {
-                    const rawUrl = brand.buttonUrl || brand.url || brand.link || data?.buttonUrl;
-                    const cardUrl = rawUrl 
-                      ? (rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`) 
-                      : '/brand';
-                    const cardText = brand.buttonText || 'Дэлгэрэнгүй';
-                    return (
-                      <Link href={cardUrl} style={{ color: '#00829d', fontSize: '14px', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        {cardText} <span style={{ fontSize: '16px' }}>&rarr;</span>
-                      </Link>
-                    );
-                  })()}
-                </div>
-              </div>
+                  </div>
+                )}
+              </Link>
             );
           })}
         </div>

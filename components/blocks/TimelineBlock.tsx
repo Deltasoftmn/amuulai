@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { getStrapiMedia, parseStrapiText } from '@/lib/api';
 
@@ -10,7 +10,7 @@ interface TimelineItem {
   title: string;
   desc: string;
   image: string;
-  icon?: string;
+  logo?: string;
 }
 
 interface TimelineBlockProps {
@@ -18,66 +18,58 @@ interface TimelineBlockProps {
 }
 
 export default function TimelineBlock({ data }: TimelineBlockProps) {
-  const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  const badgeText = parseStrapiText(data?.badgeText || data?.subtitle) || 'БИДНИЙ ТҮҮХ';
-  const title = parseStrapiText(data?.title || data?.heading) || 'Бидний түүх';
-  const description = parseStrapiText(data?.description || data?.text) || 
-    '2003 оноос эхлэн бид тасралтгүй өсөж, хөгжиж, шинэ боломжуудыг бүтээж ирсэн. Өнөөдөр бид Монголын хэрэглэгчдэд дэлхийн шилдэг брэндүүдийг хүргэдэг үндэсний тэргүүлэгч групп компани.';
+  const title = parseStrapiText(data?.title || data?.heading) || 'Бидний түүхэн замнал';
 
-  // Default timeline milestones matching design image
+  // Default timeline milestones matching reference design
   const defaultItems: TimelineItem[] = [
     {
-      year: '2003',
-      subText: '',
-      title: 'Анхны алхам',
-      desc: 'Амуулай ХХК үүсгэн байгуулагдаж, гадаадын чанартай бараа бүтээгдэхүүнийг Монголын зах зээлд импортолж эхлэв.',
-      image: '/images/timeline_2003.jpg',
-      icon: 'globe'
+      year: '1999',
+      title: 'Компанийн гараа',
+      desc: '1999 оноос эхлэн бид дэлхийн нэр хүндтэй брэндүүдийг Монголын зах зээлд албан ёсоор оруулж ирэн хэрэглэгчиддээ чанартай бүтээгдэхүүн, үйлчилгээг санал болгож эхэлсэн.',
+      image: '/images/who_are_we_main.jpg',
+      logo: '/logo.png'
     },
     {
       year: '2008',
-      subText: '',
-      title: 'Mild Cosmetics',
-      desc: 'Мэдлэг, гоо сайхны ертөнцийг Монголд нэвтрүүлэх зорилгоор Mild Cosmetics дэлгүүрийг нээв.',
+      title: 'Mild Cosmetics дэлгүүрийн нээлт',
+      desc: 'Мэдлэг, гоо сайхны ертөнцийг Монголд нэвтрүүлэх зорилгоор Японы шилдэг арьс арчилгааны дэлгүүрийн сүлжээ Mild Cosmetics-ийг нээв.',
       image: '/images/who_are_we_mild.jpg',
-      icon: 'bag'
+      logo: '/mild.png'
     },
     {
       year: '2014',
-      subText: '',
-      title: 'Genki',
-      desc: 'Эрүүл мэнд, эм бэлдмэлийн чиглэлд шинэ стандартыг тогтоохоор Genki эрүүл мэндийн дэлгүүр нээгдэв.',
+      title: 'Genki эрүүл мэндийн сүлжээ',
+      desc: 'Эрүүл мэнд, эм бэлдмэл, өргөн хэрэглээний бараа бүтээгдэхүүнийг нэг дороос санал болгох Genki дэлгүүрийн сүлжээг амжилттай хөгжүүлэв.',
       image: '/images/who_are_we_genki.jpg',
-      icon: 'health'
+      logo: '/genki.png'
     },
     {
       year: '2018',
-      subText: '',
-      title: 'OEO',
-      desc: 'Бүтээлч сэтгэлгээ, чанарлаг канцеляр болон амьдралын хэв маягийн бүтээгдэхүүнээр OEO дэлгүүр нээгдэв.',
+      title: 'OEO Craft & Hobby',
+      desc: 'Бүтээлч хобби, канцеляр болон амьдралын хэв маягийг дэмжих OEO төрөлжсөн дэлгүүрийн анхны салбарыг нээж хэрэглэгчдийн итгэлийг хүлээв.',
       image: '/images/who_are_we_oeo.jpg',
-      icon: 'pencil'
+      logo: '/oo.png'
     },
     {
-      year: '2023',
-      subText: '',
-      title: 'TON618',
-      desc: "Эрчүүдийн стиль, чанар, сонголтыг нэгтгэсэн TON618 Men's Concept Store брэндийг байгууллаа.",
+      year: '2021',
+      title: 'Олон улсын дистрибьюшн',
+      desc: 'Олон улсын шилдэг үйлдвэрлэгчидтэй түншлэлээ улам өргөжүүлэн, 21 аймгийн сүлжээ дэлгүүрүүдэд шууд дистрибьюц хийх логистикийн төвийг ашиглалтад орууллаа.',
       image: '/images/who_are_we_ton618.jpg',
-      icon: 'shirt'
+      logo: '/Ton.png'
     },
     {
       year: '2026',
-      subText: 'БИД ӨНӨӨДӨР',
-      title: 'Үргэлжилсэн өсөлт',
-      desc: '62 салбар, 7,400+ бүтээгдэхүүн, 50+ брэнд, 21 аймгийг хамарсан хүргэлтийн сүлжээтэй болов.',
+      title: 'Бид өнөөдөр',
+      desc: '62 салбар дэлгүүр, 7,400+ нэр төрлийн бүтээгдэхүүн, 50+ олон улсын брэндийг Монгол орон даяар амжилттай борлуулан ажиллаж байна.',
       image: '/images/who_are_we_main.jpg',
-      icon: 'chart'
+      logo: '/logo.png'
     }
   ];
 
-  // Strapi items parsing (events or items or timeline)
+  // Strapi dynamic events parsing
   const rawItems = Array.isArray(data?.events) 
     ? data.events 
     : (Array.isArray(data?.items) ? data.items : (Array.isArray(data?.timeline) ? data.timeline : []));
@@ -88,392 +80,276 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
           ? item.image 
           : (item.image?.url || item.image?.data?.attributes?.url);
         
-        const rawIcon = typeof item.icon === 'string'
-          ? item.icon
-          : (item.icon?.url || item.icon?.data?.attributes?.url);
+        const rawLogo = typeof item.logo === 'string'
+          ? item.logo
+          : (item.logo?.url || item.logo?.data?.attributes?.url);
 
         return {
           year: parseStrapiText(item.year) || defaultItems[idx % defaultItems.length].year,
-          subText: parseStrapiText(item.subText || item.subtitle) || (idx === rawItems.length - 1 ? 'БИД ӨНӨӨДӨР' : ''),
           title: parseStrapiText(item.title || item.heading) || defaultItems[idx % defaultItems.length].title,
           desc: parseStrapiText(item.description || item.desc || item.text) || defaultItems[idx % defaultItems.length].desc,
           image: rawImg ? getStrapiMedia(rawImg) : defaultItems[idx % defaultItems.length].image,
-          icon: rawIcon ? getStrapiMedia(rawIcon) : defaultItems[idx % defaultItems.length].icon
+          logo: rawLogo ? getStrapiMedia(rawLogo) : defaultItems[idx % defaultItems.length].logo
         };
       })
     : defaultItems;
 
-  const renderIcon = (iconVal?: string) => {
-    if (!iconVal) return null;
-    if (iconVal.startsWith('http://') || iconVal.startsWith('https://') || iconVal.startsWith('/')) {
-      return (
-        <div style={{ position: 'relative', width: '22px', height: '22px' }}>
-          <Image src={iconVal} alt="icon" fill style={{ objectFit: 'contain' }} />
-        </div>
-      );
+  const activeStory = items[activeIndex] || items[0];
+
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev > 0 ? prev - 1 : items.length - 1));
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0));
+  };
+
+  // Touch handlers for Mobile Swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    if (diff > 50) {
+      handleNext();
+    } else if (diff < -50) {
+      handlePrev();
     }
-    switch (iconVal) {
-      case 'globe':
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-        );
-      case 'bag':
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-        );
-      case 'health':
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z" />
-          </svg>
-        );
-      case 'pencil':
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-          </svg>
-        );
-      case 'shirt':
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
-          </svg>
-        );
-      case 'chart':
-      default:
-        return (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-            <path d="M3 20h18" />
-          </svg>
-        );
-    }
+    setTouchStartX(null);
   };
 
   return (
     <section 
-      className="timeline-section"
+      className="timeline-slider-section"
       style={{ 
-        padding: '100px 0', 
+        padding: '90px 0 100px', 
         backgroundColor: '#ffffff',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
-      <div className="container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+      <div className="container" style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
         
-        {/* SECTION HEADER */}
-        <div style={{ textAlign: 'center', marginBottom: '50px' }} className="fade-in-up">
-          <span 
-            style={{ 
-              color: '#2563eb', 
-              fontSize: '14px', 
-              fontWeight: '700', 
-              letterSpacing: '0.08em', 
-              textTransform: 'uppercase',
-              marginBottom: '10px',
-              display: 'block'
-            }}
-          >
-            {badgeText}
-          </span>
+        {/* SECTION TITLE */}
+        <div style={{ textAlign: 'left', marginBottom: '50px' }}>
           <h2 
             style={{ 
-              fontSize: '44px', 
+              fontSize: '42px', 
               fontWeight: '800', 
               color: '#0f172a', 
-              margin: '0 0 16px 0',
+              margin: '0 0 10px 0',
               lineHeight: '1.2',
               letterSpacing: '-0.02em'
             }}
           >
             {title}
           </h2>
-          {description && (
-            <p 
-              style={{ 
-                maxWidth: '780px', 
-                margin: '0 auto', 
-                color: '#475569', 
-                fontSize: '16px', 
-                lineHeight: '1.7',
-                fontWeight: '400'
-              }}
-            >
-              {description}
-            </p>
-          )}
         </div>
 
-        {/* TIMELINE VISUAL WAVE & YEARS HEADER */}
-        <div style={{ position: 'relative', marginBottom: '40px', paddingTop: '30px' }} className="fade-in-up">
+        {/* TOP TIMELINE YEARS BAR (ANUNGOO STYLE) */}
+        <div style={{ position: 'relative', marginBottom: '60px', padding: '0 20px' }}>
           
+          {/* HORIZONTAL DASHED/DOTTED CONNECTOR LINE */}
+          <div 
+            style={{ 
+              position: 'absolute', 
+              top: '42px', 
+              left: '50px', 
+              right: '50px', 
+              height: '2px', 
+              borderTop: '2.5px dashed #cbd5e1', 
+              zIndex: 1 
+            }} 
+          />
+
           {/* YEARS ROW */}
           <div 
             style={{ 
-              display: 'grid', 
-              gridTemplateColumns: `repeat(${items.length}, 1fr)`, 
-              textAlign: 'center',
-              position: 'relative',
-              zIndex: 2,
-              marginBottom: '12px'
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              position: 'relative', 
+              zIndex: 2 
             }}
           >
             {items.map((item, idx) => {
-              const isHovered = hoveredIdx === idx;
+              const isActive = activeIndex === idx;
+
               return (
                 <div 
-                  key={idx} 
-                  onMouseEnter={() => setHoveredIdx(idx)}
-                  onMouseLeave={() => setHoveredIdx(null)}
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
                   style={{ 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    alignItems: 'center',
+                    alignItems: 'center', 
                     cursor: 'pointer',
-                    padding: '6px 0',
-                    userSelect: 'none'
+                    userSelect: 'none',
+                    transition: 'all 0.3s ease'
                   }}
                 >
+                  {/* Year Text */}
                   <span 
                     style={{ 
-                      fontSize: '24px', 
-                      fontWeight: '800', 
-                      color: isHovered ? '#2563eb' : '#1d4ed8',
-                      letterSpacing: '-0.01em',
-                      transform: isHovered ? 'scale(1.22)' : 'scale(1)',
-                      transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                      display: 'inline-block',
-                      textShadow: isHovered ? '0 4px 16px rgba(37, 99, 235, 0.45)' : 'none',
-                      filter: isHovered ? 'brightness(1.2)' : 'none'
+                      fontSize: isActive ? '18px' : '15px', 
+                      fontWeight: isActive ? '800' : '600', 
+                      color: isActive ? '#00829d' : '#94a3b8', 
+                      marginBottom: '16px',
+                      transition: 'all 0.3s ease'
                     }}
                   >
                     {item.year}
                   </span>
-                  {item.subText && (
-                    <span 
-                      style={{ 
-                        fontSize: '11px', 
-                        fontWeight: '700', 
-                        color: isHovered ? '#2563eb' : '#475569', 
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        marginTop: '2px',
-                        transition: 'color 0.3s ease'
-                      }}
-                    >
-                      {item.subText}
-                    </span>
-                  )}
+
+                  {/* Dot Marker */}
+                  <div 
+                    style={{ 
+                      width: isActive ? '20px' : '14px', 
+                      height: isActive ? '20px' : '14px', 
+                      borderRadius: '50%', 
+                      background: isActive ? '#00829d' : '#cbd5e1', 
+                      border: isActive ? '3px solid #e0f2fe' : '2px solid #ffffff',
+                      boxShadow: isActive ? '0 0 0 3px rgba(0, 130, 157, 0.25)' : 'none',
+                      transition: 'all 0.3s ease'
+                    }} 
+                  />
                 </div>
               );
             })}
           </div>
-
-          {/* CURVED TIMELINE CONNECTOR LINE (SVG) */}
-          <div style={{ width: '100%', height: '50px', position: 'relative' }}>
-            <svg 
-              viewBox="0 0 1200 50" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ width: '100%', height: '100%', display: 'block' }}
-              preserveAspectRatio="none"
-            >
-              {/* Main solid curved path for early years */}
-              <path 
-                d="M 100 22 C 300 8, 500 32, 700 18 C 800 12, 900 24, 1000 24" 
-                stroke="#3b82f6" 
-                strokeWidth="2.5" 
-                strokeLinecap="round"
-              />
-              
-              {/* Final dashed path leading to present year with arrow */}
-              <path 
-                d="M 1000 24 L 1110 24" 
-                stroke="#3b82f6" 
-                strokeWidth="2.5" 
-                strokeDasharray="6 5"
-                strokeLinecap="round"
-              />
-              {/* Arrow Head at the end of line */}
-              <path 
-                d="M 1104 18 L 1114 24 L 1104 30" 
-                stroke="#3b82f6" 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-              />
-
-              {/* Node Dots on the Timeline */}
-              {items.map((_, i) => {
-                const posX = 100 + i * (900 / Math.max(items.length - 1, 1));
-                const posY = i % 2 === 0 ? 20 : 25;
-                const isHovered = hoveredIdx === i;
-                return (
-                  <g 
-                    key={i} 
-                    onMouseEnter={() => setHoveredIdx(i)} 
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {isHovered && (
-                      <circle 
-                        cx={posX} 
-                        cy={posY} 
-                        r="12" 
-                        fill="rgba(37, 99, 235, 0.25)" 
-                        style={{ transition: 'all 0.3s ease' }} 
-                      />
-                    )}
-                    <circle 
-                      cx={posX} 
-                      cy={posY} 
-                      r={isHovered ? "7" : "5"} 
-                      fill={isHovered ? "#2563eb" : "#ffffff"} 
-                      stroke="#3b82f6" 
-                      strokeWidth={isHovered ? "4" : "3"} 
-                      style={{ transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
-                    />
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
         </div>
 
-        {/* TIMELINE CARDS GRID */}
+        {/* BOTTOM ACTIVE STORY CONTENT (SPLIT VIEW) */}
         <div 
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           style={{ 
             display: 'grid', 
-            gridTemplateColumns: `repeat(${items.length}, 1fr)`, 
-            gap: '16px' 
+            gridTemplateColumns: 'repeat(12, 1fr)', 
+            gap: '45px', 
+            alignItems: 'center',
+            minHeight: '400px'
           }}
-          className="fade-in-up"
         >
-          {items.map((item, idx) => {
-            const isHovered = hoveredIdx === idx;
-            return (
-              <div 
-                key={idx}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                style={{ 
-                  backgroundColor: '#ffffff',
-                  borderRadius: '18px',
-                  border: isHovered ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-                  boxShadow: isHovered 
-                    ? '0 16px 32px -8px rgba(37, 99, 235, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05)' 
-                    : '0 4px 20px rgba(0, 0, 0, 0.04)',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transform: isHovered ? 'translateY(-10px) scale(1.03)' : 'translateY(0) scale(1)',
-                  transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease',
-                  position: 'relative',
-                  cursor: 'pointer'
-                }}
-              >
-                {/* TOP CIRCULAR ICON BADGE */}
-                <div 
-                  style={{ 
-                    position: 'absolute',
-                    top: '12px',
-                    left: '12px',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: isHovered ? '#2563eb' : '#061830',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10,
-                    boxShadow: isHovered ? '0 6px 18px rgba(37, 99, 235, 0.45)' : '0 4px 12px rgba(6, 24, 48, 0.3)',
-                    border: '2px solid #ffffff',
-                    transform: isHovered ? 'scale(1.12)' : 'scale(1)',
-                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                  }}
-                >
-                  {renderIcon(item.icon)}
-                </div>
-
-                {/* IMAGE CONTAINER WITH ZOOM IN & COLOR BRIGHTENING ANIMATION */}
-                <div 
-                  style={{ 
-                    position: 'relative', 
-                    width: '100%', 
-                    height: '145px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <Image 
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    style={{ 
-                      objectFit: 'cover',
-                      transform: isHovered ? 'scale(1.18)' : 'scale(1.0)',
-                      filter: isHovered ? 'brightness(1.12) contrast(1.06) saturate(1.1)' : 'brightness(0.92) contrast(0.98)',
-                      transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease'
-                    }}
-                    sizes="(max-width: 1024px) 50vw, 16vw"
-                  />
-                </div>
-
-                {/* CARD CONTENT */}
-                <div style={{ padding: '16px 14px', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  <h3 
-                    style={{ 
-                      fontSize: '15px', 
-                      fontWeight: '700', 
-                      color: isHovered ? '#2563eb' : '#0f172a', 
-                      margin: '0 0 8px 0',
-                      lineHeight: '1.3',
-                      transition: 'color 0.3s ease'
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p 
-                    style={{ 
-                      fontSize: '12px', 
-                      color: isHovered ? '#334155' : '#64748b', 
-                      lineHeight: '1.55', 
-                      margin: 0,
-                      fontWeight: '400',
-                      transition: 'color 0.3s ease'
-                    }}
-                  >
-                    {item.desc}
-                  </p>
-                </div>
+          {/* LEFT COLUMN: LOGO + DESCRIPTION TEXT + NAV ARROWS */}
+          <div style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            
+            {/* Logo / Badge */}
+            {activeStory.logo && (
+              <div style={{ marginBottom: '24px', position: 'relative', width: '120px', height: '45px' }}>
+                <Image 
+                  src={activeStory.logo} 
+                  alt={activeStory.title} 
+                  fill 
+                  style={{ objectFit: 'contain', objectPosition: 'left' }} 
+                />
               </div>
-            );
-          })}
+            )}
+
+            {/* Active Year Title */}
+            <h3 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '16px', lineHeight: '1.3' }}>
+              {activeStory.title}
+            </h3>
+
+            {/* Active Year Story Description */}
+            <p style={{ fontSize: '15px', color: '#475569', lineHeight: '1.8', marginBottom: '35px', maxWidth: '520px' }}>
+              {activeStory.desc}
+            </p>
+
+            {/* LEFT & RIGHT NAVIGATION ARROWS */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <button 
+                onClick={handlePrev}
+                aria-label="Previous story"
+                style={{ 
+                  width: '42px', 
+                  height: '42px', 
+                  borderRadius: '50%', 
+                  border: '1px solid #cbd5e1', 
+                  background: '#ffffff', 
+                  color: '#00829d', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                }}
+                className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <button 
+                onClick={handleNext}
+                aria-label="Next story"
+                style={{ 
+                  width: '42px', 
+                  height: '42px', 
+                  borderRadius: '50%', 
+                  border: '1px solid #cbd5e1', 
+                  background: '#ffffff', 
+                  color: '#00829d', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                }}
+                className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: LARGE ROUNDED MILESTONE PHOTO */}
+          <div style={{ gridColumn: 'span 6' }}>
+            <div 
+              style={{ 
+                position: 'relative', 
+                width: '100%', 
+                height: '420px', 
+                borderRadius: '32px', 
+                overflow: 'hidden', 
+                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.1)',
+                border: '1px solid #f1f5f9'
+              }}
+            >
+              <Image 
+                src={activeStory.image} 
+                alt={activeStory.title} 
+                fill 
+                style={{ objectFit: 'cover' }} 
+                sizes="(max-width: 1024px) 100vw, 50vw" 
+                className="transition-all duration-700 ease-out"
+                priority
+              />
+            </div>
+          </div>
+
         </div>
 
       </div>
 
-      {/* RESPONSIVE STYLING */}
+      {/* MOBILE RESPONSIVE MEDIA QUERIES */}
       <style jsx>{`
         @media (max-width: 1024px) {
-          .timeline-section .container > div:last-child {
-            grid-template-columns: repeat(3, 1fr) !important;
+          .timeline-slider-section .container > div:last-child {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
           }
-        }
-        @media (max-width: 640px) {
-          .timeline-section .container > div:last-child {
-            grid-template-columns: repeat(1, 1fr) !important;
+          .timeline-slider-section .container > div:last-child > div {
+            grid-column: span 12 !important;
           }
         }
       `}</style>

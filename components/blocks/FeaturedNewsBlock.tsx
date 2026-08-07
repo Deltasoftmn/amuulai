@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getStrapiMedia } from '@/lib/api';
+import { getStrapiMedia, parseStrapiText } from '@/lib/api';
 
 interface FeaturedNewsBlockProps {
   data?: any;
@@ -46,13 +46,17 @@ export default function FeaturedNewsBlock({ data, articles }: FeaturedNewsBlockP
     : (Array.isArray(articles) && articles.length > 0 ? articles : defaultNews);
 
   const newsList = rawArticles.map((item: any) => {
-    const rawImg = item.image || item.coverImage?.url || item.coverImage?.data?.attributes?.url;
+    const attrs = item.attributes || item;
+    const rawImg = attrs.image || attrs.coverImage?.url || attrs.coverImage?.data?.attributes?.url || item.image;
+    const rawContent = attrs.content || attrs.body || attrs.description || attrs.details || attrs.text || '';
+    const parsedText = parseStrapiText(rawContent);
+
     return {
-      id: item.id || item.documentId,
-      title: item.title || '',
-      slug: item.slug || 'article',
-      date: item.publishDate || item.date || item.publishedAt?.slice(0, 10) || '',
-      excerpt: item.excerpt || item.description || '',
+      id: item.id || item.documentId || attrs.id,
+      title: attrs.title || item.title || '',
+      slug: attrs.slug || item.slug || 'article',
+      date: attrs.publishDate || attrs.date || attrs.publishedAt?.slice(0, 10) || item.date || '',
+      excerpt: attrs.excerpt || item.excerpt || (parsedText ? (parsedText.length > 140 ? parsedText.slice(0, 140) + '...' : parsedText) : ''),
       image: rawImg ? getStrapiMedia(rawImg) : '/images/corporate_team.png'
     };
   });

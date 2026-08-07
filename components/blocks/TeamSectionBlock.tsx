@@ -138,30 +138,30 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
   }
 
   return (
-    <section className="bg-white w-full overflow-hidden">
-      <div className="max-w-[1240px] mx-auto p-6 sm:p-10 lg:p-16">
+    <section className="bg-white w-full overflow-hidden py-16 sm:py-24 lg:py-28">
+      <div className="max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-16">
         {/* MAIN SECTION TITLE */}
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 uppercase mb-[20px]">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 uppercase mb-8 sm:mb-12">
           {sectionTitle}
         </h2>
 
         {/* GROUPS LOOP */}
-        <div className="space-y-12 lg:space-y-16">
+        <div className="space-y-16 lg:space-y-20">
           {groups.map((group) => (
             <div key={group.id} className="w-full">
               {/* GROUP HEADER & UNIFORM DIVIDER */}
-              <div className="mb-8 lg:mb-10">
-                <h3 className="text-sm sm:text-base font-medium text-gray-600 mb-2.5">
+              <div style={{ marginBottom: '60px', marginTop: '20px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#475569', marginBottom: '14px' }}>
                   {group.groupName}
                 </h3>
                 {/* Red Underline + Full Width Gray Border Line */}
-                <div className="relative w-full border-b border-gray-200">
-                  <div className="absolute -bottom-[1px] left-0 h-[2px] bg-[#E52320] w-32 sm:w-44" />
+                <div style={{ position: 'relative', width: '100%', borderBottom: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', bottom: '-1px', left: 0, height: '3px', backgroundColor: '#E52320', width: '180px' }} />
                 </div>
               </div>
 
               {/* MEMBERS GRID WITH UNIFORM GAPS AND ASPECT RATIOS */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 lg:gap-x-8 lg:gap-y-12">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 lg:gap-x-8 lg:gap-y-12" style={{ marginTop: '20px' }}>
                 {group.members.map((member) => (
                   <div
                     key={member.id}
@@ -212,70 +212,84 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
         </div>
       </div>
 
-      {/* MEMBER DETAIL MODAL */}
+      {/* MEMBER DETAIL MODAL (ENLARGED 2-COLUMN DESKTOP & 1-COLUMN MOBILE) */}
       {selectedMember && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/65 backdrop-blur-md transition-all duration-300 animate-fade-in-up"
           onClick={() => setSelectedMember(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl transition-all transform scale-100 relative"
+            className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transition-all transform scale-100 relative border border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
             {/* CLOSE BUTTON */}
             <button
               onClick={() => setSelectedMember(null)}
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors"
+              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-gray-100 hover:bg-[#E52320] hover:text-white text-gray-600 flex items-center justify-center transition-all duration-200 shadow-sm"
               aria-label="Close"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            <div className="p-6 sm:p-8 flex flex-col items-center text-center">
-              {/* MODAL PHOTO */}
-              <div className="relative w-36 h-48 rounded-xl overflow-hidden bg-gray-100 shadow-md mb-4 border border-gray-200">
-                <Image
-                  src={selectedMember.photo || '/images/team/batbaatar.jpg'}
-                  alt={selectedMember.fullName}
-                  fill
-                  className="object-cover object-top"
-                />
+            {/* 2-COLUMN LAYOUT (DESKTOP) / 1-COLUMN (MOBILE) */}
+            <div className="p-6 sm:p-8 md:p-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+              
+              {/* LEFT COLUMN: LARGE PROFILE PHOTO */}
+              <div className="md:col-span-5 flex justify-center">
+                <div className="relative w-full max-w-[320px] md:max-w-none aspect-[3/4] rounded-2xl overflow-hidden bg-gray-100 shadow-xl border border-gray-100">
+                  <Image
+                    src={selectedMember.photo || '/images/team/batbaatar.jpg'}
+                    alt={selectedMember.fullName}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    className="object-cover object-top"
+                    priority
+                  />
+                </div>
               </div>
 
-              {/* MODAL NAME & TITLE */}
-              <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-1">
-                {selectedMember.fullName}
-              </h3>
-              <p className="text-xs font-semibold text-[#E52320] uppercase tracking-wider mb-4 max-w-md">
-                {selectedMember.jobTitle}
-              </p>
+              {/* RIGHT COLUMN: MEMBER DETAILS */}
+              <div className="md:col-span-7 flex flex-col justify-center text-left">
+                {/* MEMBER NAME */}
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 uppercase tracking-tight mb-2">
+                  {selectedMember.fullName}
+                </h3>
 
-              {/* RED DIVIDER LINE */}
-              <div className="w-12 h-1 bg-[#E52320] rounded-full mb-4" />
-
-              {/* MODAL DESCRIPTION */}
-              {selectedMember.description && (
-                <p className="text-sm text-gray-600 leading-relaxed max-w-md mb-4">
-                  {selectedMember.description}
+                {/* MEMBER JOB TITLE */}
+                <p className="text-xs sm:text-sm font-bold text-[#E52320] uppercase tracking-wider mb-4 leading-relaxed">
+                  {selectedMember.jobTitle}
                 </p>
-              )}
 
-              {/* PROFILE LINK IF AVAILABLE */}
-              {selectedMember.profileUrl && (
-                <a
-                  href={selectedMember.profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-white bg-[#E52320] hover:bg-red-700 px-5 py-2.5 rounded-full transition-colors mt-2"
-                >
-                  <span>Дэлгэрэнгүй профайл</span>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </a>
-              )}
+                {/* RED ACCENT LINE */}
+                <div className="w-16 h-1 bg-[#E52320] rounded-full mb-6" />
+
+                {/* MEMBER DESCRIPTION / BIO */}
+                {selectedMember.description && (
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-6 font-normal">
+                    {selectedMember.description}
+                  </p>
+                )}
+
+                {/* PROFILE LINK BUTTON IF AVAILABLE */}
+                {selectedMember.profileUrl && (
+                  <div>
+                    <a
+                      href={selectedMember.profileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold text-white bg-[#E52320] hover:bg-red-700 px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+                    >
+                      <span>Дэлгэрэнгүй профайл</span>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>

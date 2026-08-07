@@ -107,7 +107,7 @@ export default function ImpactStatsBlock({ data }: ImpactStatsBlockProps) {
   const statsList = fetchedStats.length > 0 ? fetchedStats : defaultStats;
 
   return (
-    <section className="stats-bar" style={{ paddingTop: '100px', paddingBottom: '40px', marginTop: '0', background: 'white', position: 'relative', zIndex: 30 }}>
+    <section className="stats-bar" style={{ paddingTop: '10px', paddingBottom: '50px', marginTop: '0', background: 'white', position: 'relative', zIndex: 30 }}>
       <div className="stats-inner">
         {title && (
           <div className="section-header" style={{ textAlign: 'center', marginBottom: '30px' }}>

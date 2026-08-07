@@ -94,7 +94,7 @@ export default function WhoAreWeBlock({ data }: WhoAreWeBlockProps) {
     <section 
       className="who-are-we-section"
       style={{ 
-        padding: '90px 0', 
+        padding: '80px 0 20px', 
         backgroundColor: '#ffffff',
         position: 'relative'
       }}

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getNavMenu, getFooterMenu, getFooterData, getSettingData, getNewsArticles, getStrapiMedia } from '@/lib/api';
+import { getNavMenu, getFooterMenu, getFooterData, getSettingData, getNewsArticles, getStrapiMedia, parseStrapiText } from '@/lib/api';
 
 const fallbackArticles = [
   {
@@ -43,6 +43,24 @@ const fallbackArticles = [
     excerpt: 'Дэлхийн тэргүүлэгч BIC брэндийн чанартай бүтээгдэхүүнүүдийг Амуулай Групп албан ёсоор хүргэж байна.',
     coverImage: '/images/mild_checkout_1783644612305.png',
   },
+  {
+    id: 5,
+    slug: 'store-renovation',
+    title: 'АМУУЛАЙ ГРУППИЙН САЛБАР ДЭЛГҮҮРИЙН ШИНЭЧЛЭЛТ',
+    publishDate: '2026-07-28',
+    dateDisplay: '2026, 7 сарын 28',
+    excerpt: 'Манай салбар дэлгүүрүүд орчин үеийн тав тухтай орчин бүрдүүлэн хэрэглэгчиддээ үйлчилж байна.',
+    coverImage: '/images/mild_store_front.png',
+  },
+  {
+    id: 6,
+    slug: 'csr-projects',
+    title: 'НИЙГМИЙН ХАРИУЦЛАГЫН ХҮРЭЭНД ХЭРЭГЖҮҮЛЖ БУЙ ТӨСЛҮҮД',
+    publishDate: '2026-07-25',
+    dateDisplay: '2026, 7 сарын 25',
+    excerpt: 'Ажилтнууд болон нийгмийн хөгжилд чиглэсэн цогц төслүүдийг үе шаттайгаар хэрэгжүүлж байна.',
+    coverImage: '/images/corporate_team.png',
+  },
 ];
 
 function formatDate(dateStr?: string) {
@@ -75,13 +93,15 @@ export default async function NewsPage() {
     articlesList = fetchedArticles.map((item: any) => {
       const attrs = item.attributes || item;
       const coverUrl = attrs.coverImage?.url || attrs.coverImage?.data?.attributes?.url;
+      const rawContent = attrs.content || attrs.body || attrs.description || attrs.details || attrs.text || '';
+      const parsedText = parseStrapiText(rawContent);
       return {
         id: item.id || attrs.id,
         slug: attrs.slug || `news-${item.id}`,
         title: attrs.title || '',
         publishDate: attrs.publishDate || attrs.publishedAt || attrs.createdAt,
         dateDisplay: formatDate(attrs.publishDate || attrs.publishedAt || attrs.createdAt),
-        excerpt: attrs.excerpt || '',
+        excerpt: attrs.excerpt || (parsedText ? (parsedText.length > 160 ? parsedText.slice(0, 160) + '...' : parsedText) : ''),
         coverImage: coverUrl ? getStrapiMedia(coverUrl) : '/images/corporate_team.png',
       };
     });
