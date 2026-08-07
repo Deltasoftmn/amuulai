@@ -15,7 +15,7 @@ const cardBgColors = [
   '#a21daf', // 2nd: Magenta / Purple
   '#059669', // 3rd: Vibrant Green
   '#0284c7', // 4th: Cyan / Teal
-  '#d97706', // 5th: Amber / Orange
+  '#d97706',
 ];
 
 const defaultLogos = [
@@ -88,8 +88,8 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
             const resultLogos: any[] = [];
             rawBrands.forEach((b: any) => {
               const bSlug = (b.slug || b.title || b.name || '').toLowerCase();
-              const matched = allBrands.find((fb: any) => 
-                (fb.slug && fb.slug.toLowerCase() === bSlug) || 
+              const matched = allBrands.find((fb: any) =>
+                (fb.slug && fb.slug.toLowerCase() === bSlug) ||
                 (fb.title && fb.title.toLowerCase() === bSlug) ||
                 fb.id === b.id
               );
@@ -123,62 +123,62 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
   return (
     <section className="section" style={{ padding: '80px 0', backgroundColor: '#ffffff', overflow: 'hidden' }}>
       <div className="container" style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px' }}>
-        
-        <div 
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', 
-            gap: '60px', 
-            alignItems: 'center' 
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+            gap: '60px',
+            alignItems: 'center'
           }}
         >
-          
+
           {/* TEXT CONTENT COLUMN */}
-          <div 
+          <div
             className={isImageLeft ? 'animate-fade-in-right' : 'animate-fade-in-left'}
-            style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
               alignItems: 'flex-start',
               order: isImageLeft ? 2 : 1
             }}
           >
             {/* Title */}
-            <h2 
-              style={{ 
-                fontSize: '36px', 
-                fontWeight: '800', 
-                color: '#111827', 
-                lineHeight: '1.2', 
-                marginBottom: '20px' 
+            <h2
+              style={{
+                fontSize: '36px',
+                fontWeight: '800',
+                color: '#111827',
+                lineHeight: '1.2',
+                marginBottom: '20px'
               }}
             >
               {title}
             </h2>
 
             {/* Description */}
-            <p 
-              style={{ 
-                fontSize: '15px', 
-                lineHeight: '1.75', 
-                color: '#4b5563', 
-                marginBottom: '30px', 
-                maxWidth: '560px' 
+            <p
+              style={{
+                fontSize: '15px',
+                lineHeight: '1.75',
+                color: '#4b5563',
+                marginBottom: '30px',
+                maxWidth: '560px'
               }}
             >
               {description}
             </p>
 
             {/* Pill Button matching Section Brand Theme Color */}
-            <Link 
+            <Link
               href={buttonUrl}
-              style={{ 
-                backgroundColor: bgColor, 
-                color: '#ffffff', 
-                padding: '10px 30px', 
-                borderRadius: '30px', 
-                fontSize: '14px', 
-                fontWeight: '600', 
+              style={{
+                backgroundColor: bgColor,
+                color: '#ffffff',
+                padding: '10px 30px',
+                borderRadius: '30px',
+                fontSize: '14px',
+                fontWeight: '600',
                 textDecoration: 'none',
                 display: 'inline-block',
                 marginBottom: '45px',
@@ -192,24 +192,24 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
 
             {/* Horizontal Brand Logos Row */}
             {activeLogos.length > 0 && (
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  flexWrap: 'wrap', 
-                  alignItems: 'center', 
-                  gap: '24px', 
-                  paddingTop: '20px', 
-                  borderTop: '1px solid #f3f4f6', 
-                  width: '100%' 
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  gap: '24px',
+                  paddingTop: '20px',
+                  borderTop: '1px solid #f3f4f6',
+                  width: '100%'
                 }}
               >
                 {activeLogos.map((brand: any, idx: number) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', minHeight: '36px' }}>
                     {brand.url ? (
-                      <img 
-                        src={brand.url} 
-                        alt={brand.name} 
-                        style={{ maxHeight: '38px', maxWidth: '100px', objectFit: 'contain', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }} 
+                      <img
+                        src={brand.url}
+                        alt={brand.name}
+                        style={{ maxHeight: '38px', maxWidth: '100px', objectFit: 'contain', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
                         className="hover:scale-[1.12]"
                         onError={(e: any) => {
                           e.currentTarget.style.display = 'none';
@@ -218,14 +218,14 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
                         }}
                       />
                     ) : null}
-                    <span 
-                      style={{ 
-                        fontSize: '14px', 
-                        fontWeight: '700', 
-                        color: '#4b5563', 
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        color: '#4b5563',
                         display: brand.url ? 'none' : 'inline-block',
-                        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
-                        cursor: 'pointer' 
+                        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        cursor: 'pointer'
                       }}
                       className="hover:scale-[1.08] hover:text-[#00829d]"
                     >
@@ -239,14 +239,14 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
           </div>
 
           {/* SHOWCASE HERO IMAGE CARD COLUMN (Alternates Left / Right with Zoom-In Effect) */}
-          <div 
+          <div
             className={`group cursor-pointer ${isImageLeft ? 'animate-fade-in-left' : 'animate-fade-in-right'}`}
-            style={{ 
-              position: 'relative', 
-              width: '100%', 
-              height: '460px', 
-              borderRadius: '24px', 
-              overflow: 'hidden', 
+            style={{
+              position: 'relative',
+              width: '100%',
+              height: '460px',
+              borderRadius: '24px',
+              overflow: 'hidden',
               backgroundColor: bgColor,
               backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 65%)',
               boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
@@ -254,17 +254,17 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
             }}
           >
             {/* Background Dotted Radial Rings Effect */}
-            <div 
-              style={{ 
-                position: 'absolute', 
-                top: '-60px', 
-                right: '-60px', 
-                width: '320px', 
-                height: '320px', 
-                borderRadius: '50%', 
+            <div
+              style={{
+                position: 'absolute',
+                top: '-60px',
+                right: '-60px',
+                width: '320px',
+                height: '320px',
+                borderRadius: '50%',
                 border: '28px radial rgba(255, 255, 255, 0.12)',
-                pointerEvents: 'none' 
-              }} 
+                pointerEvents: 'none'
+              }}
             />
 
             <Image
