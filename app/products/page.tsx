@@ -22,17 +22,20 @@ export default async function ProductsPage() {
   const brandsData = (brandsRaw || []).map((b: any) => {
     const rawLogoObj = b.logo || b.featuredLogos?.[0] || b.image || b.coverImage;
     const rawLogo = typeof rawLogoObj === 'string' ? rawLogoObj : (rawLogoObj?.url || rawLogoObj?.data?.attributes?.url);
+    const catObj = b.category?.data?.attributes || b.category || {};
     return {
       id: b.id,
       title: b.title || b.name || 'Brand',
       slug: b.slug || '',
       logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
+      categorySlug: catObj.slug || catObj.name?.toLowerCase() || '',
     };
   });
 
   // Pre-process products on the server (resolve image URLs here, not on client)
   const productsData = (productsRaw || []).map((p: any, i: number) => {
     const imageUrl = p.image?.url || p.image?.formats?.medium?.url || p.image?.formats?.small?.url || null;
+    const catObj = p.category?.data?.attributes || p.category || {};
     return {
       id: p.id || i,
       title: p.title || p.name || `Product ${i + 1}`,
@@ -41,6 +44,7 @@ export default async function ProductsPage() {
       brandSlug: p.brand?.slug || p.brand?.name?.toLowerCase() || '',
       brandName: p.brand?.title || p.brand?.name || '',
       brandId: p.brand?.id || null,
+      categorySlug: catObj.slug || catObj.name?.toLowerCase() || '',
     };
   });
 

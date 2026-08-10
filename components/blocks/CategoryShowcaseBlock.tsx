@@ -32,7 +32,20 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
   const title = data?.title || data?.categoryName || 'Ахуйн бараа';
   const description = data?.description || data?.excerpt || 'Анунгоо ХХК нь 1999 оноос хойш Монгол Улсын худалдааны зах зээлд амжилттай үйл ажиллагаа явуулж, хэрэглэгчид болон харилцагчдынхаа итгэлийг тууштайгаар хүлээн ирсэн билээ.';
   const buttonText = data?.buttonText || 'Дэлгэрэнгүй';
-  const buttonUrl = data?.buttonUrl || data?.url || data?.link || '/products';
+  
+  let targetCatSlug = 'all';
+  const lowerTitle = title.toLowerCase();
+  if (lowerTitle.includes('арьс')) targetCatSlug = 'skin-care';
+  else if (lowerTitle.includes('бие')) targetCatSlug = 'body-care';
+  else if (lowerTitle.includes('үс')) targetCatSlug = 'hair-care';
+  else if (lowerTitle.includes('амны')) targetCatSlug = 'oral-care';
+  else if (lowerTitle.includes('хүнс')) targetCatSlug = 'food';
+  else if (lowerTitle.includes('ахуйн')) targetCatSlug = 'household';
+
+  const rawButtonUrl = data?.buttonUrl || data?.url || data?.link;
+  const buttonUrl = rawButtonUrl && rawButtonUrl !== '/products' 
+    ? rawButtonUrl 
+    : `/products${targetCatSlug !== 'all' ? `?category=${targetCatSlug}` : ''}`;
 
   // Determine alternating side (Even index = Image Left, Odd index = Image Right)
   const isImageLeft = index % 2 === 1;

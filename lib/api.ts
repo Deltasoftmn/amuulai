@@ -149,14 +149,54 @@ export async function getBrandBySlug(slug: string) {
   return null;
 }
 
-export async function getProducts(brandSlug?: string) {
+export async function getCategories() {
+  try {
+    const res = await fetchStrapiAPI<any>('/categories', { populate: '*' });
+    if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+      return res.data;
+    }
+    const resProdCat = await fetchStrapiAPI<any>('/product-categories', { populate: '*' });
+    if (resProdCat?.data && Array.isArray(resProdCat.data) && resProdCat.data.length > 0) {
+      return resProdCat.data;
+    }
+
+    // Dynamic Extraction Fallback from Strapi Page Blocks & Products
+    const categoriesMap = new Map<string, { id: string; title: string; slug: string }>();
+    
+    // Check Home blocks for Category names
+    const homeBlocks = await getHomePageData();
+    if (Array.isArray(homeBlocks)) {
+      homeBlocks.forEach((block: any) => {
+        const catName = block.categoryName || block.title;
+        if (catName && (block.__component?.includes('category') || block.__component?.includes('product'))) {
+          const slug = catName.toLowerCase().replace(/\s+/g, '-');
+          categoriesMap.set(slug, { id: slug, title: catName, slug });
+        }
+      });
+    }
+
+    if (categoriesMap.size > 0) {
+      return Array.from(categoriesMap.values());
+    }
+
+    return [];
+  } catch (err) {
+    return [];
+  }
+}
+
+export async function getProducts(brandSlug?: string, categorySlug?: string) {
   try {
     const params: any = {
       'populate[0]': 'brand',
       'populate[1]': 'image',
+      'populate[2]': 'category',
     };
     if (brandSlug && brandSlug !== 'all') {
       params['filters[brand][slug][$eq]'] = brandSlug;
+    }
+    if (categorySlug && categorySlug !== 'all') {
+      params['filters[category][slug][$eq]'] = categorySlug;
     }
     const res = await fetchStrapiAPI<any>('/products', params);
     return res?.data || [];
@@ -178,15 +218,7 @@ export async function getPageBySlug(slug: string) {
   try {
     const params = {
       'filters[slug][$eq]': slug,
-      'populate[blocks][on][components.slider][populate]': '*',
-      'populate[blocks][on][shared.impact-section][populate]': '*',
-      'populate[blocks][on][components.tabs-section][populate]': '*',
-      'populate[blocks][on][components.brands-section][populate]': '*',
-      'populate[blocks][on][components.our-values-section][populate]': '*',
-      'populate[blocks][on][components.why-choose-us-section][populate]': '*',
-      'populate[blocks][on][components.featured-news-section][populate]': '*',
-      'populate[blocks][on][components.partnership-section][populate][cards][populate]': '*',
-      'populate[blocks][on][components.reels-section][populate][reels][populate]': '*',
+      'populate[blocks][populate]': '*',
       'populate[FeaturedImage]': 'true',
     };
 

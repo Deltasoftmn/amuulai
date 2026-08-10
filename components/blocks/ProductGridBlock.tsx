@@ -8,6 +8,66 @@ interface ProductGridBlockProps {
   data?: any;
 }
 
+function ProductGridCardItem({ product }: { product: any }) {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const descriptionText = product.description || product.subtitle || '';
+
+  return (
+    <div className="group cursor-pointer animate-zoom-in flex flex-col bg-white p-3.5 rounded-2xl border border-slate-100 hover:shadow-lg transition-all duration-300 h-full justify-between items-start">
+      <div className="w-full">
+        {/* Product Package Image Box */}
+        <div className="relative w-full h-[210px] bg-slate-50 flex items-center justify-center mb-3 border border-slate-100 group-hover:border-emerald-300 transition-all duration-500 overflow-hidden rounded-xl">
+          {product.image ? (
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              style={{ objectFit: 'contain', padding: '12px' }}
+              className="transition-transform duration-500 ease-out group-hover:scale-110"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-1.5 text-slate-400">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">no picture</span>
+            </div>
+          )}
+        </div>
+
+        {/* Product Title */}
+        <h3 className="text-xs font-bold text-gray-900 leading-snug mb-2">
+          {product.title}
+        </h3>
+      </div>
+
+      {/* Expandable Description Toggle */}
+      {descriptionText ? (
+        <div className="w-full pt-2 border-t border-slate-100 mt-auto">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center justify-between w-full text-[11px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors py-1 cursor-pointer"
+          >
+            <span>Тайлбар</span>
+            <svg
+              className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Expanded Description Text */}
+          {isExpanded && (
+            <div className="mt-2 text-[11px] text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100 animate-fade-in break-words">
+              {descriptionText}
+            </div>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 const defaultBrands = [
   { id: 'all', name: 'Бүгд', logo: null },
   { id: 'adicto', name: 'Adicto', logo: '/images/vilo_logo.png' },
@@ -242,77 +302,12 @@ export default function ProductGridBlock({ data }: ProductGridBlockProps) {
           style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', 
-            gap: '30px' 
+            gap: '30px',
+            alignItems: 'start'
           }}
         >
           {filteredProducts.map((product: any) => (
-            <div 
-              key={product.id}
-              className="group cursor-pointer animate-zoom-in"
-              style={{ display: 'flex', flexDirection: 'column' }}
-            >
-              {/* Product Package Image Box */}
-              <div 
-                style={{ 
-                  position: 'relative', 
-                  width: '100%', 
-                  height: '210px', 
-                  borderRadius: '16px', 
-                  backgroundColor: '#ffffff', 
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px',
-                  marginBottom: '14px',
-                  transition: 'box-shadow 0.3s ease'
-                }}
-              >
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  style={{ objectFit: 'contain', padding: '12px' }}
-                  className="transition-transform duration-500 ease-out group-hover:scale-110"
-                />
-              </div>
-
-              {/* Product Title */}
-              <h3 
-                style={{ 
-                  fontSize: '14px', 
-                  fontWeight: '700', 
-                  color: '#111827', 
-                  lineHeight: '1.35', 
-                  marginBottom: '4px',
-                  minHeight: '38px',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}
-              >
-                {product.title}
-              </h3>
-
-              {/* Product Description */}
-              {product.description && (
-                <p 
-                  style={{ 
-                    fontSize: '13px', 
-                    color: '#6b7280', 
-                    lineHeight: '1.4', 
-                    margin: 0,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {product.description}
-                </p>
-              )}
-
-            </div>
+            <ProductGridCardItem key={product.id} product={product} />
           ))}
         </div>
 
