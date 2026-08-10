@@ -91,17 +91,26 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
       id="contact"
       style={{ 
         backgroundColor: '#0f5938', 
-        backgroundImage: "url('/pattern2.png')", 
-        backgroundBlendMode: 'overlay',
-        backgroundRepeat: 'repeat',
-        backgroundSize: '260px',
         color: '#ffffff',
         padding: '90px 0 60px 0',
         position: 'relative',
         overflow: 'visible'
       }}
     >
-      <div className="container mx-auto px-6 max-w-[1240px]" style={{ maxWidth: '1240px', margin: '0 auto' }}>
+      {/* SOFTENED & BLURRED PATTERN BACKGROUND OVERLAY */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/pattern2.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: '260px',
+          opacity: 0.14,
+          filter: 'blur(3.5px)',
+          mixBlendMode: 'overlay'
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6 max-w-[1240px]" style={{ maxWidth: '1240px', margin: '0 auto' }}>
         
         {/* MAIN FOOTER TOP GRID: md:col-span-6, md:col-span-2, md:col-span-2, md:col-span-2 */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-16! items-start">
