@@ -9,6 +9,8 @@ import WhoAreWeBlock from './blocks/WhoAreWeBlock';
 import TimelineBlock from './blocks/TimelineBlock';
 import VisionMissionBlock from './blocks/VisionMissionBlock';
 import TeamSectionBlock from './blocks/TeamSectionBlock';
+import PartnershipSection from './blocks/PartnershipSection';
+import ReelsSection from './blocks/ReelsSection';
 
 import HeroVideo from './HeroVideo';
 
@@ -32,6 +34,15 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
     <>
       {blocks.map((block, index) => {
         const key = `${block.__component}-${block.id || index}`;
+        const componentName = (block.__component || '').toLowerCase();
+
+        if (componentName.includes('partnership')) {
+          return <PartnershipSection key={key} data={block} />;
+        }
+
+        if (componentName.includes('reel')) {
+          return <ReelsSection key={key} data={block} />;
+        }
 
         switch (block.__component) {
           case 'components.products-section':
@@ -106,6 +117,14 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
           case 'sections.team':
           case 'blocks.team':
             return <TeamSectionBlock key={key} data={block} />;
+
+          case 'components.partnership-section':
+          case 'sections.partnership-section':
+          case 'blocks.partnership-section':
+          case 'components.partnership':
+          case 'sections.partnership':
+          case 'blocks.partnership':
+            return <PartnershipSection key={key} data={block} />;
 
           default:
             console.warn(`Unrecognized Strapi block component: ${block.__component}`);

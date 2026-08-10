@@ -8,7 +8,12 @@ import FeaturedBrandsBlock from '@/components/blocks/FeaturedBrandsBlock';
 import WhyAmuulaiBlock from '@/components/blocks/WhyAmuulaiBlock';
 import OurValuesBlock from '@/components/blocks/OurValuesBlock';
 import FeaturedNewsBlock from '@/components/blocks/FeaturedNewsBlock';
+import PartnershipSection from '@/components/blocks/PartnershipSection';
+import ReelsSection from '@/components/blocks/ReelsSection';
 import { getHomePageData, getNavMenu, getFooterMenu, getNewsArticles, getFooterData, getSettingData, getStrapiMedia } from '@/lib/api';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const blocks = await getHomePageData();
@@ -30,6 +35,8 @@ export default async function HomePage() {
   const whyBlock = Array.isArray(blocks) ? blocks.find((b: any) => b.__component === 'components.why-choose-us-section' || b.__component === 'sections.why-choose-us') : null;
   const valuesBlock = Array.isArray(blocks) ? blocks.find((b: any) => b.__component === 'components.our-values-section' || b.__component === 'sections.our-values') : null;
   const newsBlock = Array.isArray(blocks) ? blocks.find((b: any) => b.__component === 'components.featured-news-section' || b.__component === 'sections.news') : null;
+  const partnershipBlock = Array.isArray(blocks) ? blocks.find((b: any) => (b.__component || '').toLowerCase().includes('partnership')) : null;
+  const reelsBlock = Array.isArray(blocks) ? blocks.find((b: any) => (b.__component || '').toLowerCase().includes('reel')) : null;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -43,6 +50,8 @@ export default async function HomePage() {
       <WhyAmuulaiBlock data={whyBlock} />
       <OurValuesBlock data={valuesBlock} />
       <FeaturedNewsBlock data={newsBlock} articles={articles} />
+      <PartnershipSection data={partnershipBlock} />
+      <ReelsSection data={reelsBlock} />
 
       <Footer footerItems={footerItems} footerData={footerData} settingData={settingData} />
     </div>

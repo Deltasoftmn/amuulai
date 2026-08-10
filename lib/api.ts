@@ -40,7 +40,7 @@ export async function fetchStrapiAPI<T>(
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 30 },
+      cache: 'no-store',
       ...options,
     };
 
@@ -82,7 +82,15 @@ export async function getGlobalSettings() {
 
 export async function getHomePageData() {
   const res = await fetchStrapiAPI<any>('/home', {
-    'populate[blocks][populate]': '*',
+    'populate[blocks][on][components.slider][populate]': '*',
+    'populate[blocks][on][shared.impact-section][populate]': '*',
+    'populate[blocks][on][components.tabs-section][populate]': '*',
+    'populate[blocks][on][components.brands-section][populate]': '*',
+    'populate[blocks][on][components.our-values-section][populate]': '*',
+    'populate[blocks][on][components.why-choose-us-section][populate]': '*',
+    'populate[blocks][on][components.featured-news-section][populate]': '*',
+    'populate[blocks][on][components.partnership-section][populate][cards][populate]': '*',
+    'populate[blocks][on][components.reels-section][populate][reels][populate]': '*',
   });
   return res?.data?.blocks || res?.data?.attributes?.blocks || null;
 }
@@ -170,7 +178,15 @@ export async function getPageBySlug(slug: string) {
   try {
     const params = {
       'filters[slug][$eq]': slug,
-      'populate[blocks][populate]': '*',
+      'populate[blocks][on][components.slider][populate]': '*',
+      'populate[blocks][on][shared.impact-section][populate]': '*',
+      'populate[blocks][on][components.tabs-section][populate]': '*',
+      'populate[blocks][on][components.brands-section][populate]': '*',
+      'populate[blocks][on][components.our-values-section][populate]': '*',
+      'populate[blocks][on][components.why-choose-us-section][populate]': '*',
+      'populate[blocks][on][components.featured-news-section][populate]': '*',
+      'populate[blocks][on][components.partnership-section][populate][cards][populate]': '*',
+      'populate[blocks][on][components.reels-section][populate][reels][populate]': '*',
       'populate[FeaturedImage]': 'true',
     };
 
