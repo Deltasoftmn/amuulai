@@ -90,7 +90,7 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
     <footer 
       id="contact"
       style={{ 
-        backgroundColor: '#0f5938', 
+        backgroundColor: 'rgb(0, 130, 157)', 
         color: '#ffffff',
         padding: '90px 0 60px 0',
         position: 'relative',
@@ -117,7 +117,7 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
           
           {/* COLUMN 1: LOGO + TAGLINE FROM STRAPI (6 SPANS) */}
           <div className="md:col-span-6 flex flex-col justify-between pr-4!">
-            <div className="mb-8">
+            <div className="mb-4!">
               <Link href="/" className="inline-block">
                 <Image 
                   src={logoUrl} 
