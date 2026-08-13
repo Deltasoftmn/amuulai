@@ -110,7 +110,7 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
         groupName,
         members
       };
-    }).filter(g => g.members.length > 0);
+    }).filter((g: TeamGroup) => g.members.length > 0);
   } else if (rawDirectMembers.length > 0) {
     const members: TeamMember[] = rawDirectMembers.map((m: any, mIdx: number) => parseMemberObj(m, mIdx));
     groups = [{
