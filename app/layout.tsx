@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { getSettingData, getFaviconUrl, getStrapiMedia } from "@/lib/api";
 
-const inter = Inter({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700", "900"],
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
@@ -43,7 +44,7 @@ export default async function RootLayout({
   const mimeType = isPng ? 'image/png' : isSvg ? 'image/svg+xml' : 'image/x-icon';
 
   return (
-    <html lang="mn" className={`${inter.variable} antialiased`}>
+    <html lang="mn" className={`${roboto.variable} ${roboto.className} antialiased`}>
       <head>
         <link rel="icon" type={mimeType} href={faviconUrl} key="icon" />
         <link rel="shortcut icon" href={faviconUrl} key="shortcut-icon" />
