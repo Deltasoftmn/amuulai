@@ -59,6 +59,15 @@ export function parseStrapiText(value: any): string {
   return '';
 }
 
+export function sortByOrder<T>(list: T[]): T[] {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a: any, b: any) => {
+    const orderA = typeof a?.order === 'number' ? a.order : (typeof a?.attributes?.order === 'number' ? a.attributes.order : 999999);
+    const orderB = typeof b?.order === 'number' ? b.order : (typeof b?.attributes?.order === 'number' ? b.attributes.order : 999999);
+    return orderA - orderB;
+  });
+}
+
 export async function fetchStrapiAPI<T>(
   path: string,
   urlParamsObject: Record<string, any> = {},
