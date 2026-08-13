@@ -406,40 +406,59 @@ export default async function CareersPage() {
         </div>
       </section>
 
-      {/* 7. CTA SECTION (БИДЭНТЭЙ НЭГДЭХ) */}
-      <section id="join-us" className="py-20 bg-[#00829d] text-white relative overflow-hidden">
-        <div 
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: "url('/pattern2.png')",
-            backgroundRepeat: 'repeat',
-            backgroundSize: '240px'
-          }}
-        />
-        <div className="container mx-auto px-6 max-w-[1240px] relative z-10 text-center">
-          <span className="text-cyan-200 font-extrabold text-xs tracking-widest uppercase mb-3 block">
-            ШИНЭ БОЛОМЖУУД
-          </span>
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-            Бидэнтэй нэгдэхэд бэлэн үү?
-          </h2>
-          <p className="text-slate-100 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
-            Хэрэв та өөрийн нөөц бололцоог бүрэн дайчилж, салбартаа манлайлагч багтай мөр зэрэгцэн ажиллахыг хүсвэл CV анкетаа бидэнд илгээгээрэй.
-          </p>
+      {/* 7. CTA SECTION (БИДЭНТЭЙ НЭГДЭХ / ШИНЭ БОЛОМЖУУД) */}
+      <section id="join-us" className="py-20 bg-slate-900 text-white relative overflow-hidden border-t border-slate-800">
+        {/* Glowing Background Orbs */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-[#00829d]/20 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-cyan-500/15 blur-3xl rounded-full pointer-events-none" />
 
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <a
-              href="mailto:hr@anungoo.mn"
-              className="px-8 py-4 bg-white text-[#00829d] font-extrabold rounded-xl shadow-xl hover:bg-slate-100 transition-all transform hover:-translate-y-0.5"
-            >
-              ✉️ hr@anungoo.mn рүү CV явуулах
-            </a>
-            <a
-              href="tel:+97677115511"
-              className="px-8 py-4 bg-[#006b82]/80 hover:bg-[#005c70] text-white font-bold rounded-xl border border-white/30 transition-all"
-            >
-              📞 (+976) 7711-5511
-            </a>
+        <div className="container mx-auto px-6 max-w-[1240px] relative z-10">
+          <div 
+            className="rounded-3xl p-10 md:p-16 text-center relative overflow-hidden shadow-2xl border border-white/15"
+            style={{
+              background: 'linear-gradient(135deg, rgb(0, 130, 157) 0%, #005c70 50%, #004554 100%)',
+              boxShadow: '0 25px 50px -12px rgba(0, 130, 157, 0.35)'
+            }}
+          >
+            {/* Background Pattern */}
+            <div 
+              className="absolute inset-0 opacity-15 pointer-events-none"
+              style={{
+                backgroundImage: "url('/pattern2.png')",
+                backgroundRepeat: 'repeat',
+                backgroundSize: '200px'
+              }}
+            />
+
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 text-cyan-200 font-extrabold text-xs tracking-widest uppercase mb-4 border border-white/20 backdrop-blur-md">
+                ✨ ШИНЭ БОЛОМЖУУД
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight drop-shadow-sm">
+                Бидэнтэй нэгдэхэд бэлэн үү?
+              </h2>
+              <p className="text-slate-100 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-normal opacity-95">
+                Хэрэв та өөрийн нөөц бололцоог бүрэн дайчилж, салбартаа манлайлагч багтай мөр зэрэгцэн ажиллахыг хүсвэл CV анкетаа бидэнд илгээгээрэй.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center gap-5">
+                <a
+                  href="mailto:hr@anungoo.mn"
+                  className="px-8 py-4 bg-white text-[#00829d] font-extrabold rounded-2xl shadow-xl hover:bg-slate-100 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                >
+                  <span className="text-lg">✉️</span>
+                  <span>hr@anungoo.mn рүү CV явуулах</span>
+                </a>
+                <a
+                  href="tel:+97677115511"
+                  className="px-8 py-4 bg-slate-950/50 hover:bg-slate-950/80 text-white font-bold rounded-2xl border border-white/30 backdrop-blur-md transition-all flex items-center gap-2"
+                >
+                  <span className="text-lg">📞</span>
+                  <span>(+976) 7711-5511</span>
+                </a>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
