@@ -24,7 +24,7 @@ export default async function CareersPage() {
   const benefits = [
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
@@ -33,7 +33,7 @@ export default async function CareersPage() {
     },
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       ),
@@ -42,7 +42,7 @@ export default async function CareersPage() {
     },
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
         </svg>
       ),
@@ -51,7 +51,7 @@ export default async function CareersPage() {
     },
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
       ),
@@ -60,7 +60,7 @@ export default async function CareersPage() {
     },
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       ),
@@ -69,7 +69,7 @@ export default async function CareersPage() {
     },
     {
       icon: (
-        <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-8 h-8 text-[#00829d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
@@ -103,45 +103,6 @@ export default async function CareersPage() {
     }
   ];
 
-  // Open Vacancies Sample Data
-  const vacancies = [
-    {
-      title: 'Брэнд Менежер',
-      dept: 'Маркетингийн газар',
-      type: 'Бүтэн цаг',
-      location: 'Улаанбаатар, Хан-Уул дүүрэг',
-      zangiaLink: 'https://www.zangia.mn'
-    },
-    {
-      title: 'Салбарын Эрхлэгч (MILD Cosmetics)',
-      dept: 'Жижиглэн худалдааны хэлтэс',
-      type: 'Бүтэн цаг',
-      location: 'Улаанбаатар хот',
-      zangiaLink: 'https://www.zangia.mn'
-    },
-    {
-      title: 'Ложистик & Агуулахын Ажилтан',
-      dept: 'Агуулах ложистикийн алба',
-      type: 'Бүтэн цаг',
-      location: 'Улаанбаатар хот',
-      zangiaLink: 'https://www.zangia.mn'
-    },
-    {
-      title: 'Ахлах Бухгалтер',
-      dept: 'Санхүү бүртгэлийн хэлтэс',
-      type: 'Бүтэн цаг',
-      location: 'Улаанбаатар хот',
-      zangiaLink: 'https://www.zangia.mn'
-    },
-    {
-      title: 'Худалдааны Зөвлөх',
-      dept: 'Борлуулалтын алба',
-      type: 'Бүтэн цаг / Хагас цаг',
-      location: 'Улаанбаатар & Орон нутаг',
-      zangiaLink: 'https://www.zangia.mn'
-    }
-  ];
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header navItems={navItems} logoUrl={logoUrl} transparentOnTop={true} />
@@ -159,7 +120,7 @@ export default async function CareersPage() {
 
         <div className="container mx-auto px-6 max-w-[1240px] relative z-20">
           <div className="max-w-2xl text-white">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold tracking-widest uppercase mb-4 border border-emerald-500/30">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#00829d]/20 text-cyan-300 text-xs font-bold tracking-widest uppercase mb-4 border border-[#00829d]/30">
               АМУУЛАЙ ГРУПП КАРЬЕР
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6 tracking-tight">
@@ -171,7 +132,7 @@ export default async function CareersPage() {
             <div className="flex flex-wrap gap-4">
               <a
                 href="#join-us"
-                className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition-all duration-300 transform hover:-translate-y-0.5"
+                className="px-8 py-4 bg-[#00829d] hover:bg-[#006b82] text-white font-bold rounded-xl shadow-lg shadow-[#00829d]/30 transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 Бидэнтэй нэгдэх
               </a>
@@ -181,24 +142,24 @@ export default async function CareersPage() {
       </section>
 
       {/* STATS STRIP */}
-      <section className="bg-emerald-900 text-white py-8 border-b border-emerald-800">
+      <section className="bg-[#006b82] text-white py-8 border-b border-[#005c70]">
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-emerald-300">500+</div>
-              <div className="text-xs md:text-sm text-emerald-100/80 font-medium uppercase tracking-wider mt-1">Багийн гишүүд</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">500+</div>
+              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Багийн гишүүд</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-emerald-300">98%</div>
-              <div className="text-xs md:text-sm text-emerald-100/80 font-medium uppercase tracking-wider mt-1">Ажилтны сэтгэл ханамж</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">98%</div>
+              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Ажилтны сэтгэл ханамж</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-emerald-300">24+</div>
-              <div className="text-xs md:text-sm text-emerald-100/80 font-medium uppercase tracking-wider mt-1">Жил тасралтгүй өсөлт</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">24+</div>
+              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Жил тасралтгүй өсөлт</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-emerald-300">50+</div>
-              <div className="text-xs md:text-sm text-emerald-100/80 font-medium uppercase tracking-wider mt-1">Олон улсын брэнд</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">50+</div>
+              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Олон улсын брэнд</div>
             </div>
           </div>
         </div>
@@ -208,7 +169,7 @@ export default async function CareersPage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-emerald-600 font-extrabold text-xs tracking-widest uppercase mb-2 block">
+            <span className="text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-2 block">
               ЯАГААД БИДНИЙГ СҮНГЭХ ВЭ?
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
@@ -220,8 +181,8 @@ export default async function CareersPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 group">
-              <div className="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#00829d]/40 hover:shadow-xl transition-all duration-300 group">
+              <div className="w-14 h-14 rounded-xl bg-[#00829d]/10 text-[#00829d] flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
                 🏛️
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Байгууллагын соёл</h3>
@@ -230,8 +191,8 @@ export default async function CareersPage() {
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 group">
-              <div className="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#00829d]/40 hover:shadow-xl transition-all duration-300 group">
+              <div className="w-14 h-14 rounded-xl bg-[#00829d]/10 text-[#00829d] flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
                 🚀
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Хөгжих боломж</h3>
@@ -240,8 +201,8 @@ export default async function CareersPage() {
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 group">
-              <div className="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#00829d]/40 hover:shadow-xl transition-all duration-300 group">
+              <div className="w-14 h-14 rounded-xl bg-[#00829d]/10 text-[#00829d] flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
                 🤝
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Эрч хүчтэй баг</h3>
@@ -250,8 +211,8 @@ export default async function CareersPage() {
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:shadow-xl transition-all duration-300 group">
-              <div className="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#00829d]/40 hover:shadow-xl transition-all duration-300 group">
+              <div className="w-14 h-14 rounded-xl bg-[#00829d]/10 text-[#00829d] flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
                 🎁
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Ажилтны хангамж</h3>
@@ -267,7 +228,7 @@ export default async function CareersPage() {
       <section className="py-20 bg-slate-900 text-white relative">
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-emerald-400 font-extrabold text-xs tracking-widest uppercase mb-2 block">
+            <span className="text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-2 block">
               АЖИЛЛАХ ОРЧИН & БАГИЙН СУРАГ
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -288,7 +249,7 @@ export default async function CareersPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
-                <span className="text-xs text-emerald-400 font-bold uppercase">Орчин үеийн Оффис</span>
+                <span className="text-xs text-[#00829d] font-bold uppercase">Орчин үеийн Оффис</span>
                 <h4 className="text-lg font-bold text-white mt-1">Бүтээлч Ажлын Орон Зай</h4>
               </div>
             </div>
@@ -302,7 +263,7 @@ export default async function CareersPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
-                <span className="text-xs text-emerald-400 font-bold uppercase">Хамтын Ажиллагаа</span>
+                <span className="text-xs text-[#00829d] font-bold uppercase">Хамтын Ажиллагаа</span>
                 <h4 className="text-lg font-bold text-white mt-1">Багийн Хурлууд ба Хамтын Сэтгэлгээ</h4>
               </div>
             </div>
@@ -316,7 +277,7 @@ export default async function CareersPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
-                <span className="text-xs text-emerald-400 font-bold uppercase">Салбарын Хамт Олон</span>
+                <span className="text-xs text-[#00829d] font-bold uppercase">Салбарын Хамт Олон</span>
                 <h4 className="text-lg font-bold text-white mt-1">Жижиглэн Худалдаа ба Дистрибьюшн Баг</h4>
               </div>
             </div>
@@ -328,7 +289,7 @@ export default async function CareersPage() {
       <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-emerald-600 font-extrabold text-xs tracking-widest uppercase mb-2 block">
+            <span className="text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-2 block">
               ХАНГАМЖ & ХӨНГӨЛӨЛТ
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
@@ -342,7 +303,7 @@ export default async function CareersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((b, idx) => (
               <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-xl bg-[#00829d]/10 flex items-center justify-center mb-6">
                   {b.icon}
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">{b.title}</h3>
@@ -357,7 +318,7 @@ export default async function CareersPage() {
       <section className="py-20 bg-white border-t border-slate-100">
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-emerald-600 font-extrabold text-xs tracking-widest uppercase mb-2 block">
+            <span className="text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-2 block">
               БҮТЭЭГЧДИЙН СҮРТ СОЁЛ
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
@@ -372,18 +333,18 @@ export default async function CareersPage() {
             {testimonials.map((t, idx) => (
               <div key={idx} className="bg-slate-50 p-8 rounded-2xl border border-slate-200/70 flex flex-col justify-between relative">
                 <div>
-                  <div className="text-emerald-500 text-4xl font-serif mb-4 leading-none">&ldquo;</div>
+                  <div className="text-[#00829d] text-4xl font-serif mb-4 leading-none">&ldquo;</div>
                   <p className="text-slate-700 text-sm leading-relaxed mb-6 italic">
                     {t.quote}
                   </p>
                 </div>
                 <div className="flex items-center gap-4 pt-4 border-t border-slate-200/60">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-500 flex-shrink-0">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#00829d] flex-shrink-0">
                     <Image src={t.image} alt={t.name} fill className="object-cover" />
                   </div>
                   <div>
                     <h4 className="text-base font-bold text-slate-900">{t.name}</h4>
-                    <p className="text-xs text-emerald-700 font-medium">{t.role}</p>
+                    <p className="text-xs text-[#00829d] font-semibold">{t.role}</p>
                     <span className="text-[11px] text-slate-400">{t.tenure}</span>
                   </div>
                 </div>
@@ -446,7 +407,7 @@ export default async function CareersPage() {
       </section>
 
       {/* 7. CTA SECTION (БИДЭНТЭЙ НЭГДЭХ) */}
-      <section id="join-us" className="py-20 bg-emerald-800 text-white relative overflow-hidden">
+      <section id="join-us" className="py-20 bg-[#00829d] text-white relative overflow-hidden">
         <div 
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
@@ -456,26 +417,26 @@ export default async function CareersPage() {
           }}
         />
         <div className="container mx-auto px-6 max-w-[1240px] relative z-10 text-center">
-          <span className="text-emerald-300 font-extrabold text-xs tracking-widest uppercase mb-3 block">
+          <span className="text-cyan-200 font-extrabold text-xs tracking-widest uppercase mb-3 block">
             ШИНЭ БОЛОМЖУУД
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
             Бидэнтэй нэгдэхэд бэлэн үү?
           </h2>
-          <p className="text-emerald-100 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+          <p className="text-slate-100 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
             Хэрэв та өөрийн нөөц бололцоог бүрэн дайчилж, салбартаа манлайлагч багтай мөр зэрэгцэн ажиллахыг хүсвэл CV анкетаа бидэнд илгээгээрэй.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6">
             <a
               href="mailto:hr@anungoo.mn"
-              className="px-8 py-4 bg-white text-emerald-900 font-extrabold rounded-xl shadow-xl hover:bg-emerald-50 transition-all transform hover:-translate-y-0.5"
+              className="px-8 py-4 bg-white text-[#00829d] font-extrabold rounded-xl shadow-xl hover:bg-slate-100 transition-all transform hover:-translate-y-0.5"
             >
               ✉️ hr@anungoo.mn рүү CV явуулах
             </a>
             <a
               href="tel:+97677115511"
-              className="px-8 py-4 bg-emerald-950/60 hover:bg-emerald-950 text-white font-bold rounded-xl border border-emerald-600 transition-all"
+              className="px-8 py-4 bg-[#006b82]/80 hover:bg-[#005c70] text-white font-bold rounded-xl border border-white/30 transition-all"
             >
               📞 (+976) 7711-5511
             </a>
