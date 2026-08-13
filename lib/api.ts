@@ -256,7 +256,7 @@ export async function getBusinessBySlug(slug: string) {
   try {
     const cleanSlug = decodeURIComponent(slug).toLowerCase().trim();
     
-    // 1. Try exact slug filter
+    // 1. Try exact slug filter on /businesses
     let res = await fetchStrapiAPI<any>('/businesses', {
       'filters[slug][$eq]': cleanSlug,
       populate: '*',
@@ -265,7 +265,7 @@ export async function getBusinessBySlug(slug: string) {
       return res.data[0];
     }
 
-    // 2. Try title filter
+    // 2. Try title filter on /businesses
     res = await fetchStrapiAPI<any>('/businesses', {
       'filters[title][$icontains]': cleanSlug.replace(/-/g, ' '),
       populate: '*',
@@ -274,7 +274,7 @@ export async function getBusinessBySlug(slug: string) {
       return res.data[0];
     }
 
-    // 3. Fetch list and match by slug/title normalized
+    // 3. Fetch list from /businesses and match by slug/title normalized
     const allRes = await fetchStrapiAPI<any>('/businesses', { populate: '*' });
     const list = allRes?.data || [];
     if (Array.isArray(list) && list.length > 0) {
@@ -284,6 +284,37 @@ export async function getBusinessBySlug(slug: string) {
         return bSlug === cleanSlug.replace(/[^a-z0-9]+/g, '');
       });
       if (match) return match;
+    }
+
+    // 4. Fallback: Search Home page tabs section if /businesses returns empty
+    const homeBlocks = await getHomePageData();
+    if (Array.isArray(homeBlocks)) {
+      const tabsBlock = homeBlocks.find((b: any) => b.__component === 'components.tabs-section');
+      if (tabsBlock && Array.isArray(tabsBlock.tabs)) {
+        for (const tab of tabsBlock.tabs) {
+          if (Array.isArray(tab.brands)) {
+            const foundBrand = tab.brands.find((b: any) => {
+              const bSlug = (b.slug || b.attributes?.slug || b.title || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '');
+              return bSlug === cleanSlug.replace(/[^a-z0-9]+/g, '');
+            });
+            if (foundBrand) {
+              return {
+                attributes: {
+                  name: foundBrand.title || foundBrand.name,
+                  slogan: foundBrand.slogan || foundBrand.desc || foundBrand.description,
+                  description: foundBrand.description || foundBrand.desc,
+                  coverImage: foundBrand.backgroundImage || foundBrand.image || foundBrand.coverImage,
+                  contact: foundBrand.contact || {
+                    phone: foundBrand.phone || foundBrand.contactPhone,
+                    websiteUrl: foundBrand.websiteUrl || foundBrand.website || foundBrand.url,
+                    address: foundBrand.address || foundBrand.contactAddress,
+                  }
+                }
+              };
+            }
+          }
+        }
+      }
     }
   } catch (err) {
     console.error('Error fetching business by slug:', err);

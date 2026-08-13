@@ -125,16 +125,19 @@ export default async function BusinessDetailPage({ params }: PageProps) {
         ? rawGallery.data.map((item: any) => getStrapiMedia(item?.attributes?.url || item?.url)).filter(Boolean) 
         : []);
 
-  // Contacts from Strapi Business, settingData, footerData, or company defaults
-  const globalPhone = settingData?.phone || settingData?.contactPhone || footerData?.phone || (Array.isArray(footerData?.contacts) ? footerData.contacts[0]?.phone : '') || '+976 7711-5511';
-  const globalWebsite = settingData?.website || 'https://amuulai.mn';
-  const globalAddress = settingData?.address || settingData?.contactAddress || footerData?.address || 'Улаанбаатар хот, Хан-Уул дүүрэг, Амуулай Тауэр';
+  // Badge from Strapi
+  const rawBadgeStr = parseStrapiText(attrs.badge);
+  const badge = rawBadgeStr.replace(/<[^>]*>?/gm, '').trim() || 'АМУУЛАЙ БИЗНЕС';
 
-  const phone = attrs.contactPhone || attrs.phone || attrs.contact_phone || attrs.telephone || attrs.Phone || attrs.phone_number || globalPhone;
-  const website = attrs.contactWebsite || attrs.website || attrs.contact_website || attrs.url || attrs.link || attrs.Website || globalWebsite;
-  const address = attrs.contactAddress || attrs.address || attrs.contact_address || attrs.location || attrs.Address || globalAddress;
+  // Contacts extracted from Strapi Business entry `contact` component (as configured in Strapi schema)
+  const contactComponent = attrs.contact || (Array.isArray(attrs.contacts) ? attrs.contacts[0] : null) || {};
 
-  const hasContacts = true;
+  const phone = contactComponent.phone || contactComponent.contactPhone || attrs.contactPhone || attrs.phone || '';
+  const website = contactComponent.websiteUrl || contactComponent.website || contactComponent.contactWebsite || attrs.contactWebsite || attrs.website || '';
+  const address = contactComponent.address || contactComponent.contactAddress || attrs.contactAddress || attrs.address || '';
+  const email = contactComponent.email || contactComponent.contactEmail || attrs.contactEmail || attrs.email || '';
+
+  const hasContacts = Boolean(phone || website || address || email);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -162,8 +165,8 @@ export default async function BusinessDetailPage({ params }: PageProps) {
             {/* Left Column (7 Spans) */}
             <div className="lg:col-span-7 flex flex-col gap-8">
               <div>
-                <span className="bg-[#00829d]/10 text-[#00829d] px-4 py-1.5 rounded-full text-xs font-bold inline-block mb-3 border border-[#00829d]/20">
-                  АМУУЛАЙ БИЗНЕС
+                <span className="bg-[#00829d]/10 text-[#00829d] px-4 py-1.5 rounded-full text-xs font-bold inline-block mb-3 border border-[#00829d]/20 uppercase tracking-wider">
+                  {badge}
                 </span>
                 <h1 className="text-3xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
                   {name}
@@ -240,6 +243,14 @@ export default async function BusinessDetailPage({ params }: PageProps) {
                         <span className="text-cyan-200 font-bold shrink-0">Утас:</span>
                         <a href={`tel:${phone}`} className="hover:text-white transition-colors">
                           {phone}
+                        </a>
+                      </div>
+                    )}
+                    {email && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-cyan-200 font-bold shrink-0">Э-мэйл:</span>
+                        <a href={`mailto:${email}`} className="hover:text-white transition-colors underline break-all">
+                          {email}
                         </a>
                       </div>
                     )}
