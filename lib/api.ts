@@ -174,15 +174,6 @@ export async function getFooterMenu() {
   return footerMenu?.items || [];
 }
 
-export function sortByOrder<T>(list: T[]): T[] {
-  if (!Array.isArray(list)) return [];
-  return [...list].sort((a: any, b: any) => {
-    const orderA = typeof a?.order === 'number' ? a.order : (typeof a?.attributes?.order === 'number' ? a.attributes.order : 999999);
-    const orderB = typeof b?.order === 'number' ? b.order : (typeof b?.attributes?.order === 'number' ? b.attributes.order : 999999);
-    return orderA - orderB;
-  });
-}
-
 export async function getBrands() {
   const res = await fetchStrapiAPI<any>('/brands', {
     'sort[0]': 'order:asc',
