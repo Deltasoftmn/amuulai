@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getStrapiMedia } from '@/lib/api';
+import { getStrapiMedia, sortByOrder } from '@/lib/api';
 
 interface CategoryShowcaseBlockProps {
   data?: any;
@@ -58,13 +58,14 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
   const showcaseImg = rawShowcaseImg ? getStrapiMedia(rawShowcaseImg) : '/images/mild_shelf_1783644620504.png';
 
   // Extract logos from Strapi (nested brands relation or featuredLogos)
-  const rawBrands = data?.brands || data?.featuredLogos || data?.logos || [];
+  const rawBrands = sortByOrder(data?.brands || data?.featuredLogos || data?.logos || []);
   let brandLogos: any[] = [];
   if (Array.isArray(rawBrands) && rawBrands.length > 0) {
     rawBrands.forEach((b: any) => {
       const bTitle = b.title || b.name || '';
-      if (Array.isArray(b.featuredLogos) && b.featuredLogos.length > 0) {
-        b.featuredLogos.forEach((logoObj: any) => {
+      const fLogos = sortByOrder(b.featuredLogos || []);
+      if (Array.isArray(fLogos) && fLogos.length > 0) {
+        fLogos.forEach((logoObj: any) => {
           const lUrl = typeof logoObj === 'string' ? logoObj : (logoObj?.url || logoObj?.attributes?.url);
           if (lUrl) {
             brandLogos.push({
@@ -107,7 +108,7 @@ export default function CategoryShowcaseBlock({ data, index = 0 }: CategoryShowc
                 fb.id === b.id
               );
               const bTitle = matched?.title || b.title || b.name || '';
-              const fLogos = matched?.featuredLogos || b.featuredLogos || [];
+              const fLogos = sortByOrder(matched?.featuredLogos || b.featuredLogos || []);
               if (Array.isArray(fLogos) && fLogos.length > 0) {
                 fLogos.forEach((logoObj: any) => {
                   const lUrl = typeof logoObj === 'string' ? logoObj : (logoObj?.url || logoObj?.attributes?.url);

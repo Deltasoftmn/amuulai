@@ -19,9 +19,41 @@ export function parseStrapiText(value: any): string {
     return value.map(b => parseStrapiText(b)).filter(Boolean).join('\n');
   }
   if (typeof value === 'object') {
-    if (typeof value.text === 'string') return value.text;
+    if (value.type === 'image' && (value.image?.url || value.image?.data?.attributes?.url || value.url)) {
+      const imgUrl = value.image?.url || value.image?.data?.attributes?.url || value.url;
+      return `<img src="${getStrapiMedia(imgUrl)}" alt="${value.image?.alternativeText || value.alternativeText || 'Зураг'}" class="my-6 rounded-xl max-w-full h-auto shadow-md" />`;
+    }
+    if (typeof value.text === 'string') {
+      let text = value.text;
+      if (value.bold) text = `<strong>${text}</strong>`;
+      if (value.italic) text = `<em>${text}</em>`;
+      if (value.underline) text = `<u>${text}</u>`;
+      if (value.code) text = `<code>${text}</code>`;
+      return text;
+    }
     if (Array.isArray(value.children)) {
-      return value.children.map((c: any) => parseStrapiText(c)).join('');
+      const childrenText = value.children.map((c: any) => parseStrapiText(c)).join('');
+      if (value.type === 'heading') {
+        const level = value.level || 2;
+        return `<h${level}>${childrenText}</h${level}>`;
+      }
+      if (value.type === 'paragraph') {
+        return `<p>${childrenText}</p>`;
+      }
+      if (value.type === 'quote') {
+        return `<blockquote>${childrenText}</blockquote>`;
+      }
+      if (value.type === 'list') {
+        const tag = value.format === 'ordered' ? 'ol' : 'ul';
+        return `<${tag}>${childrenText}</${tag}>`;
+      }
+      if (value.type === 'list-item') {
+        return `<li>${childrenText}</li>`;
+      }
+      if (value.type === 'link' && value.url) {
+        return `<a href="${value.url}" target="_blank" rel="noopener noreferrer" class="text-[#00829d] underline">${childrenText}</a>`;
+      }
+      return childrenText;
     }
   }
   return '';
@@ -133,9 +165,23 @@ export async function getFooterMenu() {
   return footerMenu?.items || [];
 }
 
+export function sortByOrder<T>(list: T[]): T[] {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a: any, b: any) => {
+    const orderA = typeof a?.order === 'number' ? a.order : (typeof a?.attributes?.order === 'number' ? a.attributes.order : 999999);
+    const orderB = typeof b?.order === 'number' ? b.order : (typeof b?.attributes?.order === 'number' ? b.attributes.order : 999999);
+    return orderA - orderB;
+  });
+}
+
 export async function getBrands() {
-  const res = await fetchStrapiAPI<any>('/brands', { populate: '*' });
-  return res?.data || [];
+  const res = await fetchStrapiAPI<any>('/brands', {
+    'sort[0]': 'order:asc',
+    'sort[1]': 'id:asc',
+    populate: '*',
+  });
+  const list = res?.data || [];
+  return sortByOrder(list);
 }
 
 export async function getBrandBySlug(slug: string) {

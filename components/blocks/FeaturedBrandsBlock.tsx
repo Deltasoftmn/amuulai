@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getStrapiMedia } from '@/lib/api';
+import { getStrapiMedia, sortByOrder } from '@/lib/api';
 
 interface FeaturedBrandsBlockProps {
   data?: any;
@@ -27,7 +27,8 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
   }, [data?.brands]);
 
   const badgeText = data?.badgeText || 'Брэндүүд';
-  const brandList = brandsData.length > 0 ? brandsData : (Array.isArray(data?.brands) ? data.brands : []);
+  const rawBrandList = brandsData.length > 0 ? brandsData : (Array.isArray(data?.brands) ? data.brands : []);
+  const brandList = sortByOrder(rawBrandList);
 
   if (brandList.length === 0) {
     return null;
@@ -50,7 +51,7 @@ export default function FeaturedBrandsBlock({ data }: FeaturedBrandsBlockProps) 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
           {brandList.map((brand: any, i: number) => {
             // Extract logo URLs from Strapi (featuredLogos, subLogos, or logos)
-            const rawLogos = brand.featuredLogos || brand.subLogos || brand.logos;
+            const rawLogos = sortByOrder(brand.featuredLogos || brand.subLogos || brand.logos || []);
             let strapiLogos: string[] = [];
 
             if (Array.isArray(rawLogos) && rawLogos.length > 0) {

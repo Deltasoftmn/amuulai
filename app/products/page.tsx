@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCatalog from '@/components/ProductCatalog';
-import { getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia } from '@/lib/api';
+import { getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia, sortByOrder } from '@/lib/api';
 
 export const revalidate = 60; // Refresh cache every 60s
 
@@ -19,7 +19,8 @@ export default async function ProductsPage() {
   ]);
 
   // Pre-process brands on the server (resolve image URLs here, not on client)
-  const brandsData = (brandsRaw || []).map((b: any) => {
+  const sortedBrandsRaw = sortByOrder(brandsRaw || []);
+  const brandsData = sortedBrandsRaw.map((b: any) => {
     const rawLogoObj = b.logo || b.featuredLogos?.[0] || b.image || b.coverImage;
     const rawLogo = typeof rawLogoObj === 'string' ? rawLogoObj : (rawLogoObj?.url || rawLogoObj?.data?.attributes?.url);
     const catObj = b.category?.data?.attributes || b.category || {};
@@ -29,6 +30,7 @@ export default async function ProductsPage() {
       slug: b.slug || '',
       logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
       categorySlug: catObj.slug || catObj.name?.toLowerCase() || '',
+      order: b.order,
     };
   });
 

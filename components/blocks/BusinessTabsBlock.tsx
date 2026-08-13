@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getStrapiMedia } from '@/lib/api';
+import { getStrapiMedia, sortByOrder } from '@/lib/api';
 
 interface BusinessTabsBlockProps {
   data?: any;
@@ -119,10 +119,10 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
   let currentBrands: any[] = [];
   if (activeTabIndex === 0) {
     const rawTab1 = strapiTabs[0]?.brands;
-    currentBrands = Array.isArray(rawTab1) && rawTab1.length > 0 ? rawTab1 : defaultConsumerBusinesses;
+    currentBrands = Array.isArray(rawTab1) && rawTab1.length > 0 ? sortByOrder(rawTab1) : defaultConsumerBusinesses;
   } else {
     const rawTab2 = strapiTabs[1]?.brands;
-    currentBrands = Array.isArray(rawTab2) && rawTab2.length > 0 ? rawTab2 : defaultDistributionBusinesses;
+    currentBrands = Array.isArray(rawTab2) && rawTab2.length > 0 ? sortByOrder(rawTab2) : defaultDistributionBusinesses;
   }
 
   // Calculate slidesPerView & maxIndex

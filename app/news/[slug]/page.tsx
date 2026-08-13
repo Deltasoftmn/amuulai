@@ -133,8 +133,24 @@ function formatCkeditorContent(content: any): string {
   if (typeof content !== 'string') {
     content = parseStrapiText(content);
   }
-  const str = String(content).trim();
+  let str = String(content).trim();
   if (!str) return '';
+
+  // 1. Fix relative img src attributes (e.g. src="/uploads/...")
+  str = str.replace(/src=["']\/uploads\//gi, `src="${getStrapiMedia('/uploads/')}`);
+
+  // 2. Convert markdown image syntax ![alt](url) to HTML <img> tags with full Strapi URL
+  str = str.replace(/!\[([^\]]*)\]\(([^)]+)\)/gi, (match, alt, url) => {
+    const fullUrl = getStrapiMedia(url);
+    return `<img src="${fullUrl}" alt="${alt || ''}" class="my-6 rounded-xl max-w-full h-auto shadow-md" />`;
+  });
+
+  // 3. Convert raw image URLs written directly in text or standalone lines into <img> tags
+  const rawUrlRegex = /(^|[\s>])(https?:\/\/[^\s<"']+\.(?:png|jpg|jpeg|webp|gif|svg)|^\/uploads\/[^\s<"']+\.(?:png|jpg|jpeg|webp|gif|svg))/gi;
+  str = str.replace(rawUrlRegex, (match, prefix, url) => {
+    const fullUrl = getStrapiMedia(url);
+    return `${prefix}<img src="${fullUrl}" alt="Мэдээний зураг" class="my-6 rounded-xl max-w-full h-auto shadow-md" />`;
+  });
 
   if (/<[a-z][\s\S]*>/i.test(str)) {
     return str;
@@ -372,6 +388,15 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
             .article-body-content strong {
               color: #0f172a !important;
               font-weight: 700 !important;
+            }
+            .article-body-content img {
+              max-width: 100% !important;
+              height: auto !important;
+              border-radius: 12px !important;
+              margin-top: 24px !important;
+              margin-bottom: 24px !important;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+              display: block !important;
             }
           ` }} />
 

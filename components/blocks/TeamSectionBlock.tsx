@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getStrapiMedia, parseStrapiText } from '@/lib/api';
 
@@ -23,77 +23,76 @@ interface TeamSectionBlockProps {
   data?: any;
 }
 
-// Default fallback data matching the reference design screenshot
-const DEFAULT_GROUPS: TeamGroup[] = [
-  {
-    id: 'founders',
-    groupName: 'Үүсгэн байгуулагчид',
-    members: [
-      {
-        id: 1,
-        fullName: 'Н.БАТБААТАР',
-        jobTitle: 'ЕРӨНХИЙ ЗАХИРАЛ, ХАМТРАН ҮҮСГЭН БАЙГУУЛАГЧ',
-        photo: '/images/team/batbaatar.jpg',
-        description: 'Амуулай Группийн Ерөнхий захирал, Хамтран үүсгэн байгуулагч. Компанийн стратегийн хөгжил, салбар хоорондын интеграцийг удирддаг.'
-      },
-      {
-        id: 2,
-        fullName: 'Б.БҮЖИНЛХАМ',
-        jobTitle: 'ГҮЙЦЭТГЭХ ЗАХИРАЛ, ХАМТРАН ҮҮСГЭН БАЙГУУЛАГЧ',
-        photo: '/images/team/bujinlham.jpg',
-        description: 'Амуулай Группийн Гүйцэтгэх захирал, Хамтран үүсгэн байгуулагч. Үйл ажиллагааны удирдлага, олон улсын түншлэлийг хариуцдаг.'
-      }
-    ]
-  },
-  {
-    id: 'executives',
-    groupName: 'Салбар газрын удирдлагууд',
-    members: [
-      {
-        id: 3,
-        fullName: 'Б.ЭНХДУУЛАЛ',
-        jobTitle: 'ЭРСДЭЛ, УДИРДЛАГЫН ГАЗРЫН ЗАХИРАЛ',
-        photo: '/images/team/enkhduulal.jpg',
-        description: 'Эрсдэлийн удирдлага, дотоод хяналт болон байгууллагын засаглалын стратегийг боловсруулж ажилладаг.'
-      },
-      {
-        id: 4,
-        fullName: 'Н.ЛХАМДУЛАМ',
-        jobTitle: 'САНХҮҮГИЙН БҮРТГЭЛИЙН ГАЗРЫН ЗАХИРАЛ',
-        photo: '/images/team/lhamdulam.jpg',
-        description: 'Группийн санхүүгийн төлөвлөлт, бүртгэл тайлагнал болон санхүүгийн эрсдэлийн удирдлагыг хариуцдаг.'
-      },
-      {
-        id: 5,
-        fullName: 'Н.МӨНХЗУЛ',
-        jobTitle: 'КОСМЕТИК БИЗНЕСИЙН ГАЗРЫН ЗАХИРАЛ',
-        photo: '/images/team/munkhzul.jpg',
-        description: 'Косметик, гоо сайхны брэндүүдийн импорт, маркетинг, салбар дэлгүүрүүдийн борлуулалтыг удирддаг.'
-      },
-      {
-        id: 6,
-        fullName: 'П.НЯМАА',
-        jobTitle: 'ЛОГИСТИКИЙН ГАЗРЫН ЗАХИРАЛ',
-        photo: '/images/team/nyamaa.jpg',
-        description: 'Логистик, нийлүүлэлтийн сүлжээ, агуулахын менежмент болон тээвэрлэлтийн үйл ажиллагааг хариуцдаг.'
-      }
-    ]
-  }
-];
+function parseMemberObj(m: any, mIdx: number): TeamMember {
+  const attrs = m?.attributes || m || {};
+  
+  const rawPhotoObj = attrs.photo || attrs.image || attrs.avatar || attrs.picture || attrs.media || attrs.file;
+  const rawPhotoUrl = typeof rawPhotoObj === 'string'
+    ? rawPhotoObj
+    : (rawPhotoObj?.url || rawPhotoObj?.data?.attributes?.url || rawPhotoObj?.attributes?.url || rawPhotoObj?.data?.url);
+  
+  const photoUrl = rawPhotoUrl ? getStrapiMedia(rawPhotoUrl) : '';
+  const fullName = parseStrapiText(attrs.fullName || attrs.name || attrs.title || attrs.personName) || 'Багийн гишүүн';
+  const jobTitle = parseStrapiText(attrs.jobTitle || attrs.position || attrs.role || attrs.title) || '';
+  const description = parseStrapiText(attrs.description || attrs.bio || attrs.content || attrs.about || '');
+
+  return {
+    id: attrs.id || m.id || mIdx,
+    fullName,
+    jobTitle,
+    photo: photoUrl,
+    profileUrl: typeof attrs.profileUrl === 'string' ? attrs.profileUrl : (typeof attrs.link === 'string' ? attrs.link : ''),
+    description
+  };
+}
 
 export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [fetchedData, setFetchedData] = useState<any>(null);
+
+  // Client-side fetcher to get deep populated team members directly from Strapi
+  useEffect(() => {
+    const rawData = fetchedData || data;
+    const hasPopulatedMembers = Array.isArray(rawData?.groups) && rawData.groups.some((g: any) => {
+      const mems = g?.members || g?.team_members || g?.items;
+      return Array.isArray(mems) && mems.length > 0;
+    });
+
+    if (!hasPopulatedMembers) {
+      const directUrl = 'https://admin.deltasoft.website/api/pages?filters[slug][$eq]=about-us&populate[blocks][on][components.team-section][populate][groups][populate][members][populate]=*';
+      fetch(directUrl)
+        .then(res => res.json())
+        .then(json => {
+          const pages = json?.data || [];
+          if (pages.length > 0) {
+            const page = pages[0];
+            const blocks = page?.blocks || page?.attributes?.blocks || [];
+            const teamBlock = blocks.find((b: any) => (b.__component || '').toLowerCase().includes('team'));
+            if (teamBlock) {
+              setFetchedData(teamBlock);
+            }
+          }
+        })
+        .catch(err => console.error('Error fetching Strapi team members:', err));
+    }
+  }, [data, fetchedData]);
+
+  const activeData = fetchedData || data;
 
   // Section title
-  const rawSectionTitle = data?.sectionTitle || data?.title;
+  const rawSectionTitle = activeData?.sectionTitle || activeData?.title;
   const sectionTitle = parseStrapiText(rawSectionTitle) || 'МЕНЕДЖМЕНТИЙН БАГИЙН ТАНИЛЦУУЛГА';
 
-  // Process groups from Strapi data if available
+  // Process groups directly from Strapi data without static fallbacks
   let groups: TeamGroup[] = [];
 
-  const rawGroups = Array.isArray(data?.groups)
-    ? data.groups
-    : (Array.isArray(data?.sections) ? data.sections : (Array.isArray(data?.items) ? data.items : []));
+  const rawGroups = Array.isArray(activeData?.groups)
+    ? activeData.groups
+    : (Array.isArray(activeData?.sections) ? activeData.sections : []);
+
+  const rawDirectMembers = Array.isArray(activeData?.members)
+    ? activeData.members
+    : (Array.isArray(activeData?.team_members) ? activeData.team_members : (Array.isArray(activeData?.items) ? activeData.items : []));
 
   if (rawGroups.length > 0) {
     groups = rawGroups.map((grp: any, groupIdx: number) => {
@@ -104,41 +103,29 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
         ? grp.members
         : (Array.isArray(grp.team_members) ? grp.team_members : (Array.isArray(grp.items) ? grp.items : []));
 
-      // Fallback matching default members if Strapi member list in group is empty
-      const defaultGroup = DEFAULT_GROUPS[groupIdx] || DEFAULT_GROUPS[0];
-
-      const members: TeamMember[] = rawMembers.length > 0
-        ? rawMembers.map((m: any, mIdx: number) => {
-            const rawPhoto = m.photo?.url || m.photo?.data?.attributes?.url || m.image?.url || m.image?.data?.attributes?.url || m.photo || m.image;
-            const photoUrl = rawPhoto ? getStrapiMedia(rawPhoto) : (defaultGroup.members[mIdx]?.photo || '/images/team/batbaatar.jpg');
-
-            const fullName = parseStrapiText(m.fullName || m.name || m.title) || defaultGroup.members[mIdx]?.fullName || 'Багийн гишүүн';
-            const jobTitle = parseStrapiText(m.jobTitle || m.position || m.role) || defaultGroup.members[mIdx]?.jobTitle || 'Захирал';
-            const description = parseStrapiText(m.description) || defaultGroup.members[mIdx]?.description || '';
-
-            return {
-              id: m.id || mIdx,
-              fullName,
-              jobTitle,
-              photo: photoUrl,
-              profileUrl: typeof m.profileUrl === 'string' ? m.profileUrl : (typeof m.link === 'string' ? m.link : ''),
-              description
-            };
-          })
-        : defaultGroup.members;
+      const members: TeamMember[] = rawMembers.map((m: any, mIdx: number) => parseMemberObj(m, mIdx));
 
       return {
         id: grp.id || groupIdx,
         groupName,
         members
       };
-    });
-  } else {
-    groups = DEFAULT_GROUPS;
+    }).filter(g => g.members.length > 0);
+  } else if (rawDirectMembers.length > 0) {
+    const members: TeamMember[] = rawDirectMembers.map((m: any, mIdx: number) => parseMemberObj(m, mIdx));
+    groups = [{
+      id: 'default-group',
+      groupName: 'Багийн гишүүд',
+      members
+    }];
+  }
+
+  if (groups.length === 0) {
+    return null;
   }
 
   return (
-    <section className="bg-white w-full overflow-hidden py-16 sm:py-24 lg:py-28">
+    <section className="bg-white w-full overflow-hidden py-16 sm:py-24 lg:py-28" id="management">
       <div className="max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-16">
         {/* MAIN SECTION TITLE */}
         <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 uppercase mb-8 sm:mb-12">
@@ -154,9 +141,9 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
                 <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#475569', marginBottom: '14px' }}>
                   {group.groupName}
                 </h3>
-                {/* Red Underline + Full Width Gray Border Line */}
+                {/* Website Primary Color (#00829d) Underline + Full Width Gray Border Line */}
                 <div style={{ position: 'relative', width: '100%', borderBottom: '1px solid #e2e8f0' }}>
-                  <div style={{ position: 'absolute', bottom: '-1px', left: 0, height: '3px', backgroundColor: '#E52320', width: '180px' }} />
+                  <div style={{ position: 'absolute', bottom: '-1px', left: 0, height: '3px', backgroundColor: '#00829d', width: '180px' }} />
                 </div>
               </div>
 
@@ -170,29 +157,39 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
                   >
                     {/* PHOTO CARD CONTAINER */}
                     <div className="relative w-full aspect-[3/4] rounded-lg sm:rounded-xl overflow-hidden bg-gray-100 mb-4 shadow-sm border border-gray-100/80 transition-all duration-300 group-hover:shadow-md group-hover:border-gray-200">
-                      <Image
-                        src={member.photo || '/images/team/batbaatar.jpg'}
-                        alt={member.fullName}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      />
+                      {member.photo ? (
+                        <Image
+                          src={member.photo}
+                          alt={member.fullName}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+                          className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
+                          <svg className="w-12 h-12 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </div>
+                      )}
                     </div>
 
                     {/* MEMBER CONTENT CONTAINER */}
                     <div className="flex flex-col items-center justify-between text-center min-h-[100px] w-full px-1">
                       {/* MEMBER NAME */}
-                      <h4 className="font-bold text-gray-900 uppercase text-xs sm:text-sm md:text-base tracking-wide mb-1 transition-colors group-hover:text-[#E52320]">
+                      <h4 className="font-bold text-gray-900 uppercase text-xs sm:text-sm md:text-base tracking-wide mb-1 transition-colors group-hover:text-[#00829d]">
                         {member.fullName}
                       </h4>
 
                       {/* MEMBER JOB TITLE */}
-                      <p className="text-[11px] sm:text-xs text-gray-500 uppercase font-semibold leading-relaxed max-w-[240px] mb-2 px-1">
-                        {member.jobTitle}
-                      </p>
+                      {member.jobTitle && (
+                        <p className="text-[11px] sm:text-xs text-gray-500 uppercase font-semibold leading-relaxed max-w-[240px] mb-2 px-1">
+                          {member.jobTitle}
+                        </p>
+                      )}
 
-                      {/* RED ARROW ICON */}
-                      <div className="mt-auto text-[#E52320] transition-transform duration-300 group-hover:translate-x-1">
+                      {/* WEBSITE PRIMARY COLOR ARROW ICON */}
+                      <div className="mt-auto text-[#00829d] transition-transform duration-300 group-hover:translate-x-1">
                         <svg
                           className="w-4 h-4"
                           fill="none"
@@ -212,7 +209,7 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
         </div>
       </div>
 
-      {/* MEMBER DETAIL MODAL (ENLARGED 2-COLUMN DESKTOP & 1-COLUMN MOBILE) */}
+      {/* MEMBER DETAIL MODAL */}
       {selectedMember && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/65 backdrop-blur-md transition-all duration-300 animate-fade-in-up"
@@ -225,7 +222,7 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
             {/* CLOSE BUTTON */}
             <button
               onClick={() => setSelectedMember(null)}
-              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-gray-100 hover:bg-[#E52320] hover:text-white text-gray-600 flex items-center justify-center transition-all duration-200 shadow-sm"
+              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-gray-100 hover:bg-[#00829d] hover:text-white text-gray-600 flex items-center justify-center transition-all duration-200 shadow-sm"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -239,14 +236,22 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
               {/* LEFT COLUMN: LARGE PROFILE PHOTO */}
               <div className="md:col-span-5 flex justify-center">
                 <div className="relative w-full max-w-[320px] md:max-w-none aspect-[3/4] rounded-2xl overflow-hidden bg-gray-100 shadow-xl border border-gray-100">
-                  <Image
-                    src={selectedMember.photo || '/images/team/batbaatar.jpg'}
-                    alt={selectedMember.fullName}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 40vw"
-                    className="object-cover object-top"
-                    priority
-                  />
+                  {selectedMember.photo ? (
+                    <Image
+                      src={selectedMember.photo}
+                      alt={selectedMember.fullName}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 40vw"
+                      className="object-cover object-top"
+                      priority
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                      <svg className="w-16 h-16 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -258,12 +263,14 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
                 </h3>
 
                 {/* MEMBER JOB TITLE */}
-                <p className="text-xs sm:text-sm font-bold text-[#E52320] uppercase tracking-wider mb-4 leading-relaxed">
-                  {selectedMember.jobTitle}
-                </p>
+                {selectedMember.jobTitle && (
+                  <p className="text-xs sm:text-sm font-bold text-[#00829d] uppercase tracking-wider mb-4 leading-relaxed">
+                    {selectedMember.jobTitle}
+                  </p>
+                )}
 
-                {/* RED ACCENT LINE */}
-                <div className="w-16 h-1 bg-[#E52320] rounded-full mb-6" />
+                {/* WEBSITE PRIMARY COLOR ACCENT LINE */}
+                <div className="w-16 h-1 bg-[#00829d] rounded-full mb-6" />
 
                 {/* MEMBER DESCRIPTION / BIO */}
                 {selectedMember.description && (
@@ -279,7 +286,7 @@ export default function TeamSectionBlock({ data }: TeamSectionBlockProps) {
                       href={selectedMember.profileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold text-white bg-[#E52320] hover:bg-red-700 px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+                      className="inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold text-white bg-[#00829d] hover:bg-[#006b82] px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
                     >
                       <span>Дэлгэрэнгүй профайл</span>
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

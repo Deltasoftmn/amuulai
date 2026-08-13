@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BlockManager from '@/components/BlockManager';
 import ProductCatalog from '@/components/ProductCatalog';
-import { getPageBySlug, getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia } from '@/lib/api';
+import { getPageBySlug, getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia, sortByOrder } from '@/lib/api';
 
 export const revalidate = 60; // Refresh cache every 60s
 
@@ -21,16 +21,19 @@ export default async function BrandsPage() {
   const blocks = pageData?.blocks || pageData?.attributes?.blocks || [];
 
   // Pre-process brands on the server
-  const brandsData = (brandsRaw || []).map((b: any) => {
+  const sortedBrandsRaw = sortByOrder(brandsRaw || []);
+  const brandsData = sortedBrandsRaw.map((b: any) => {
     const rawLogo = b.logo?.url || b.featuredLogos?.[0]?.url || b.image?.url || null;
+    const sortedSubLogos = sortByOrder(b.featuredLogos || []);
     return {
       id: b.id,
       title: b.title || b.name || 'Brand',
       slug: b.slug || '',
       logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
-      subLogos: Array.isArray(b.featuredLogos)
-        ? b.featuredLogos.map((l: any) => getStrapiMedia(l.url)).filter(Boolean)
+      subLogos: Array.isArray(sortedSubLogos)
+        ? sortedSubLogos.map((l: any) => getStrapiMedia(typeof l === 'string' ? l : l.url)).filter(Boolean)
         : [],
+      order: b.order,
     };
   });
 

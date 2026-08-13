@@ -111,25 +111,25 @@ function renderFeatureIcon(featureText: string, iconUrl: string | null, index: n
   const textLower = featureText.toLowerCase();
 
   if (textLower.includes('customer') || textLower.includes('access')) {
-    return <Users className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Users className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
   if (textLower.includes('distribution') || textLower.includes('nationwide') || textLower.includes('network')) {
-    return <Globe className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Globe className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
   if (textLower.includes('marketing') || textLower.includes('brand')) {
-    return <Megaphone className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Megaphone className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
   if (textLower.includes('salary') || textLower.includes('benefit')) {
-    return <Wallet className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Wallet className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
   if (textLower.includes('program') || textLower.includes('development') || textLower.includes('professional')) {
-    return <Monitor className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Monitor className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
   if (textLower.includes('flexible') || textLower.includes('work') || textLower.includes('arrangement')) {
-    return <Clock className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+    return <Clock className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
   }
 
-  return <CheckCircle className="w-4.5 h-4.5 text-[#1e6b37] shrink-0 stroke-[2]" />;
+  return <CheckCircle className="w-4.5 h-4.5 text-[#00829d] shrink-0 stroke-[2]" />;
 }
 
 export default function PartnershipSection({ data }: PartnershipSectionProps) {
@@ -244,16 +244,14 @@ export default function PartnershipSection({ data }: PartnershipSectionProps) {
                         href={buttonUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full py-4 px-6 rounded-2xl bg-[#1e6b37] text-white font-semibold text-center text-[15px] hover:bg-[#16562c] transition-colors duration-200 shadow-xs !p-[6px]"
-                        style={{ padding: '6px !important' }}
+                        className="flex items-center justify-center w-full py-3.5 px-6 rounded-2xl bg-[#00829d] hover:bg-[#006b82] text-white font-bold text-center text-[15px] transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                       >
                         {buttonText}
                       </a>
                     ) : (
                       <Link
                         href={buttonUrl}
-                        className="flex items-center justify-center w-full py-4 px-6 rounded-2xl bg-[#1e6b37] text-white font-semibold text-center text-[15px] hover:bg-[#16562c] transition-colors duration-200 shadow-xs !p-[6px]"
-                        style={{ padding: '6px !important' }}
+                        className="flex items-center justify-center w-full py-3.5 px-6 rounded-2xl bg-[#00829d] hover:bg-[#006b82] text-white font-bold text-center text-[15px] transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                       >
                         {buttonText}
                       </Link>

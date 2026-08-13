@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getStrapiMedia, getCategories, getProducts, getBrands } from '@/lib/api';
+import { getStrapiMedia, getCategories, getProducts, getBrands, sortByOrder } from '@/lib/api';
 
 interface ProductCatalogProps {
   initialBrands?: any[];
@@ -181,7 +181,8 @@ export default function ProductCatalog({
   // Fetch Brands from /api/brands
   useEffect(() => {
     const processBrands = (rawList: any[]) => {
-      const parsedBrands = rawList.map((b: any) => {
+      const sortedList = sortByOrder(rawList || []);
+      const parsedBrands = sortedList.map((b: any) => {
         const attrs = b.attributes || b;
         const rawLogoObj = attrs.logo || attrs.featuredLogos?.[0] || attrs.image || attrs.coverImage;
         const rawLogo = typeof rawLogoObj === 'string' ? rawLogoObj : (rawLogoObj?.url || rawLogoObj?.data?.attributes?.url);
@@ -192,6 +193,7 @@ export default function ProductCatalog({
           title: attrs.title || attrs.name || 'Brand',
           slug: bSlug,
           logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
+          order: b.order ?? attrs.order,
         };
       });
       setBrands(parsedBrands);

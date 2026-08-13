@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCatalog from '@/components/ProductCatalog';
-import { getBrandBySlug, getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia } from '@/lib/api';
+import { getBrandBySlug, getBrands, getProducts, getNavMenu, getFooterMenu, getFooterData, getSettingData, getStrapiMedia, sortByOrder } from '@/lib/api';
 
 interface BrandDetailPageProps {
   params: Promise<{
@@ -32,20 +32,23 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
     slug: slug,
   };
 
-  const featuredLogos = Array.isArray(brand.featuredLogos)
-    ? brand.featuredLogos.map((l: any) => {
+  const rawFeaturedLogos = sortByOrder(brand.featuredLogos || []);
+  const featuredLogos = Array.isArray(rawFeaturedLogos)
+    ? rawFeaturedLogos.map((l: any) => {
         const u = typeof l === 'string' ? l : (l?.url || l?.attributes?.url);
         return u ? getStrapiMedia(u) : '';
       }).filter(Boolean)
     : [];
 
-  const brandsData = (brandsRaw || []).map((b: any) => {
+  const sortedBrandsRaw = sortByOrder(brandsRaw || []);
+  const brandsData = sortedBrandsRaw.map((b: any) => {
     const rawLogo = b.logo?.url || b.featuredLogos?.[0]?.url || b.image?.url || null;
     return {
       id: b.id,
       title: b.title || b.name || 'Brand',
       slug: b.slug || '',
       logoUrl: rawLogo ? getStrapiMedia(rawLogo) : null,
+      order: b.order,
     };
   });
 
