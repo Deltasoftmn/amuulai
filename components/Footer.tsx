@@ -92,7 +92,7 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
       style={{ 
         backgroundColor: 'rgb(0, 130, 157)', 
         color: '#ffffff',
-        padding: '100px 0 85px 0',
+        padding: '120px 0 85px 0',
         position: 'relative',
         overflow: 'visible'
       }}
