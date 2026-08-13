@@ -253,11 +253,42 @@ export async function getProducts(brandSlug?: string, categorySlug?: string) {
 }
 
 export async function getBusinessBySlug(slug: string) {
-  const res = await fetchStrapiAPI<any>('/businesses', {
-    'filters[slug][$eq]': slug,
-    populate: '*',
-  });
-  return res?.data?.[0] || null;
+  try {
+    const cleanSlug = decodeURIComponent(slug).toLowerCase().trim();
+    
+    // 1. Try exact slug filter
+    let res = await fetchStrapiAPI<any>('/businesses', {
+      'filters[slug][$eq]': cleanSlug,
+      populate: '*',
+    });
+    if (res?.data && res.data.length > 0) {
+      return res.data[0];
+    }
+
+    // 2. Try title filter
+    res = await fetchStrapiAPI<any>('/businesses', {
+      'filters[title][$icontains]': cleanSlug.replace(/-/g, ' '),
+      populate: '*',
+    });
+    if (res?.data && res.data.length > 0) {
+      return res.data[0];
+    }
+
+    // 3. Fetch list and match by slug/title normalized
+    const allRes = await fetchStrapiAPI<any>('/businesses', { populate: '*' });
+    const list = allRes?.data || [];
+    if (Array.isArray(list) && list.length > 0) {
+      const match = list.find((b: any) => {
+        const item = b.attributes || b;
+        const bSlug = (item.slug || item.title || item.name || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '');
+        return bSlug === cleanSlug.replace(/[^a-z0-9]+/g, '');
+      });
+      if (match) return match;
+    }
+  } catch (err) {
+    console.error('Error fetching business by slug:', err);
+  }
+  return null;
 }
 
 export async function getPageBySlug(slug: string) {

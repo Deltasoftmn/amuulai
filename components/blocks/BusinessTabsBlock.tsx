@@ -5,56 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getStrapiMedia, sortByOrder } from '@/lib/api';
 
-interface BusinessTabsBlockProps {
-  data?: any;
-}
-
-const defaultConsumerBusinesses = [
-  {
-    title: "Mild Cosmetics",
-    slug: "mild-cosmetics",
-    desc: "Японы гоо сайхан, арьс арчилгааны сүлжээ дэлгүүр",
-    logoUrl: "/mild.png",
-    image: "/images/who_are_we_mild.jpg",
-    bgTint: "rgba(255, 240, 245, 0.7)"
-  },
-  {
-    title: "Genki Drugstore",
-    slug: "genki-drugstore",
-    desc: "Япон гар ахуй, хүнс, эрүүл мэндийн бүтээгдэхүүний сүлжээ",
-    logoUrl: "/genki.png",
-    image: "/images/who_are_we_genki.jpg",
-    bgTint: "rgba(232, 244, 248, 0.7)"
-  },
-  {
-    title: "OEO",
-    slug: "oeo",
-    desc: "Гар урлал, бүтээлч хоббиг дэмжигч төрөлжсөн дэлгүүр",
-    logoUrl: "/oo.png",
-    image: "/images/who_are_we_oeo.jpg",
-    bgTint: "rgba(244, 244, 246, 0.7)"
-  }
-];
-
-const defaultDistributionBusinesses = [
-  {
-    title: "TON 618",
-    slug: "ton",
-    desc: "Олон улсын хүнс, өргөн хэрэглээний барааны дистрибьюшн сүлжээ",
-    logoUrl: "/Ton.png",
-    image: "/images/who_are_we_ton618.jpg",
-    bgTint: "rgba(240, 244, 248, 0.7)"
-  },
-  {
-    title: "Ikigai",
-    slug: "ikigai",
-    desc: "Сургалт, хүний хөгжил, байгууллагын хөгжлийн төв",
-    logoUrl: "/ikigai.png",
-    image: "/images/subsidiary_care.png",
-    bgTint: "rgba(244, 248, 240, 0.7)"
-  }
-];
-
 export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [canonicalTabsData, setCanonicalTabsData] = useState<any>(null);
@@ -115,14 +65,14 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
   const tab1Label = strapiTabs[0]?.tabTitle || 'Consumer Businesses';
   const tab2Label = strapiTabs[1]?.tabTitle || 'Distribution & Services';
 
-  // Determine items to display
+  // Determine items to display from Strapi
   let currentBrands: any[] = [];
   if (activeTabIndex === 0) {
     const rawTab1 = strapiTabs[0]?.brands;
-    currentBrands = Array.isArray(rawTab1) && rawTab1.length > 0 ? sortByOrder(rawTab1) : defaultConsumerBusinesses;
+    currentBrands = Array.isArray(rawTab1) && rawTab1.length > 0 ? sortByOrder(rawTab1) : [];
   } else {
     const rawTab2 = strapiTabs[1]?.brands;
-    currentBrands = Array.isArray(rawTab2) && rawTab2.length > 0 ? sortByOrder(rawTab2) : defaultDistributionBusinesses;
+    currentBrands = Array.isArray(rawTab2) && rawTab2.length > 0 ? sortByOrder(rawTab2) : [];
   }
 
   // Calculate slidesPerView & maxIndex
@@ -286,7 +236,15 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                   ? (rawImage.startsWith('/') && !rawImage.startsWith('/uploads') ? rawImage : getStrapiMedia(rawImage))
                   : null;
 
-                const slug = brand.slug || brand.title?.toLowerCase().replace(/\s+/g, '-') || 'business';
+                const rawSlug = 
+                  brand.slug || 
+                  brand.attributes?.slug || 
+                  brand.business?.slug || 
+                  brand.business?.data?.attributes?.slug || 
+                  brand.business?.data?.slug || 
+                  (brand.title || brand.name || 'mild-cosmetics').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+
+                const slug = rawSlug.replace(/^\/businesses\//, '').replace(/^\//, '');
 
                 // Responsive slide flex-basis: 
                 // Desktop 3.18 slides (3 full + 18% peeking 4th card), or 3 full if count <= 3
@@ -296,9 +254,10 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                   : (isOverflow ? 'calc((100% - 24px * 2) / 3.18)' : 'calc((100% - 24px * 2) / 3)');
 
                 return (
-                  <div 
-                    key={brand.id || idx} 
-                    className="branch-card group"
+                  <Link
+                    key={brand.id || idx}
+                    href={`/businesses/${slug}`}
+                    className="branch-card group block"
                     style={{
                       flex: `0 0 ${cardFlexWidth}`,
                       minWidth: isMobile ? '280px' : '300px',
@@ -310,6 +269,7 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                       display: 'flex',
                       flexDirection: 'column',
                       height: '460px', // Uniform height
+                      textDecoration: 'none',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     }}
                   >
@@ -410,15 +370,13 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                         </p>
                       </div>
                       
-                      <Link 
-                        href={`/businesses/${slug}`} 
+                      <span 
                         style={{
                           color: '#00829d',
                           fontSize: '13px',
                           fontWeight: '800',
                           textTransform: 'uppercase',
                           letterSpacing: '0.5px',
-                          textDecoration: 'none',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '6px',
@@ -426,9 +384,9 @@ export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
                         }}
                       >
                         ДЭЛГЭРЭНГҮЙ <span style={{ fontSize: '15px' }}>&rarr;</span>
-                      </Link>
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

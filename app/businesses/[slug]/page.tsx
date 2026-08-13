@@ -1,11 +1,18 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getBusinessBySlug } from '@/lib/api';
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getNavMenu, getSettingData, getStrapiMedia } from '@/lib/api';
+import BusinessGallerySlider from '@/components/BusinessGallerySlider';
+import { 
+  getBusinessBySlug, 
+  getNavMenu, 
+  getFooterMenu, 
+  getFooterData, 
+  getSettingData, 
+  getStrapiMedia, 
+  parseStrapiText 
+} from '@/lib/api';
 
 interface PageProps {
   params: Promise<{
@@ -13,51 +20,129 @@ interface PageProps {
   }>;
 }
 
-const fallbackBusinessData: Record<string, any> = {
-  'mild-cosmetics': {
-    name: 'Mild Cosmetics',
-    slogan: 'Япон, Солонгос улсын №1 гоо сайхны брэндүүдийг Монголд',
-    description: `Mild Cosmetics нь 2008 оноос хойш Монгол улсын хэрэглэгчдэд Япон болон Солонгос улсын нэр хүнд бүхий гоо сайхан, арьс арчилгаа, бие арчилгааны шилдэг брэндүүдийг албан ёсны дистрибьюторын эрхтэйгээр нийлүүлж байна. 
-
-Бид хэрэглэгчдийнхээ эрүүл мэнд, гоо сайханд 100% баталгаатай, оригнал бүтээгдэхүүнийг хүргэхийг гол зорилгоо болгон ажилладаг. Сүлжээ дэлгүүрүүд болон онлайн платформдоо 1000 гаруй нэр төрлийн бараа бүтээгдэхүүнийг борлуулж байна.`,
-    coverImage: '/images/mild_store_front_1783644603936.png',
-    infographicImage: '/images/mild_shelf_1783644620504.png',
-    gallery: [
-      '/images/mild_checkout_1783644612305.png',
-      '/images/corporate_team.png',
-    ],
-    contactPhone: '+976 7711-8899',
-    contactWebsite: 'https://mild.mn',
-    contactAddress: 'Улаанбаатар хот, Сүхбаатар дүүрэг, Амуулай Тауэр, 5 давхар',
-  },
-};
-
 export default async function BusinessDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const fetchedBusiness = await getBusinessBySlug(slug);
   const navItems = await getNavMenu();
+  const footerItems = await getFooterMenu();
+  const footerData = await getFooterData();
   const settingData = await getSettingData();
+
   const logoUrl = settingData?.mainLogo?.url 
     ? getStrapiMedia(settingData.mainLogo.url) 
     : (settingData?.whiteLogo?.url ? getStrapiMedia(settingData.whiteLogo.url) : undefined);
 
-  const business = fetchedBusiness?.attributes || fallbackBusinessData[slug] || {
-    name: slug.toUpperCase().replace('-', ' '),
-    slogan: 'Амуулай Группийн салбар бизнес',
-    description: `${slug} салбарын дэлгэрэнгүй мэдээлэл. Бид чанартай бүтээгдэхүүн үйлчилгээг хэрэглэгчдэдээ нийлүүлдэг.`,
-    coverImage: '/images/why_amuulai_main.png',
-    infographicImage: '/images/corporate_team.png',
-    gallery: ['/images/why_amuulai_main.png', '/images/corporate_team.png'],
-    contactPhone: '+976 7711-8899',
-    contactWebsite: 'https://amuulai.mn',
-    contactAddress: 'Улаанбаатар хот, Амуулай Тауэр',
-  };
+  const attrs = fetchedBusiness?.attributes || fetchedBusiness || null;
+
+  // If Strapi returns no data for this business, render clean empty state
+  if (!attrs) {
+    const formattedSlugTitle = decodeURIComponent(slug)
+      .replace(/-/g, ' ')
+      .toUpperCase();
+
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <Header navItems={navItems} logoUrl={logoUrl} />
+
+        <main className="flex-grow pt-32 pb-20 flex items-center justify-center">
+          <div className="max-w-[1240px] mx-auto px-6 text-center">
+            
+            {/* Breadcrumb Navigation */}
+            <div className="mb-8 flex items-center justify-center gap-2 text-sm text-gray-500 font-medium">
+              <Link href="/" className="hover:text-[#00829d] transition-colors">
+                Нүүр
+              </Link>
+              <span>/</span>
+              <Link href="/#businesses" className="hover:text-[#00829d] transition-colors">
+                Бизнесүүд
+              </Link>
+              <span>/</span>
+              <span className="text-gray-900 font-bold">{formattedSlugTitle}</span>
+            </div>
+
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 shadow-sm max-w-xl mx-auto flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-6">
+                <svg className="w-8 h-8 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+              </div>
+
+              <h1 className="text-2xl font-extrabold text-gray-900 mb-3">
+                {formattedSlugTitle}
+              </h1>
+
+              <p className="text-gray-500 text-base leading-relaxed mb-8">
+                Strapi систем дээр энэ бизнесийн мэдээлэл хараахан оруулаагүй эсвэл хаалттай байна.
+              </p>
+
+              <Link
+                href="/#businesses"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00829d] hover:bg-[#006b82] text-white font-bold text-sm transition-all"
+              >
+                <span>Бүх бизнесүүд рүү буцах</span>
+                <span>&rarr;</span>
+              </Link>
+            </div>
+
+          </div>
+        </main>
+
+        <Footer footerItems={footerItems} footerData={footerData} settingData={settingData} />
+      </div>
+    );
+  }
+
+  // Business Name from Strapi
+  const rawNameStr = parseStrapiText(attrs.name || attrs.title || attrs.Name || attrs.Title);
+  const name = rawNameStr.replace(/<[^>]*>?/gm, '').trim() || slug.toUpperCase().replace(/-/g, ' ');
+
+  // Slogan from Strapi
+  const rawSloganStr = parseStrapiText(attrs.slogan || attrs.subtitle || attrs.tagline || attrs.desc_short);
+  const slogan = rawSloganStr.replace(/<[^>]*>?/gm, '').trim() || '';
+
+  // Description from Strapi
+  const rawDescription = attrs.description || attrs.content || attrs.body || attrs.details || attrs.about || '';
+  const description = parseStrapiText(rawDescription) || (typeof rawDescription === 'string' ? rawDescription : '');
+
+  // Cover Image from Strapi
+  const rawCover = attrs.coverImage || attrs.cover || attrs.image || attrs.banner || attrs.logo;
+  const rawCoverUrl = typeof rawCover === 'string' ? rawCover : (rawCover?.url || rawCover?.data?.attributes?.url);
+  const coverUrl = rawCoverUrl ? getStrapiMedia(rawCoverUrl) : null;
+
+  // Infographic Image from Strapi
+  const rawInfo = attrs.infographicImage || attrs.infographic || attrs.chartImage;
+  const rawInfoUrl = typeof rawInfo === 'string' ? rawInfo : (rawInfo?.url || rawInfo?.data?.attributes?.url);
+  const infographicUrl = rawInfoUrl ? getStrapiMedia(rawInfoUrl) : null;
+
+  // Gallery from Strapi
+  const rawGallery = attrs.gallery || attrs.images || attrs.photos || [];
+  const galleryList: string[] = Array.isArray(rawGallery)
+    ? rawGallery.map((item: any) => {
+        const u = typeof item === 'string' ? item : (item?.url || item?.data?.attributes?.url || item?.attributes?.url);
+        return u ? getStrapiMedia(u) : '';
+      }).filter(Boolean)
+    : (Array.isArray(rawGallery?.data) 
+        ? rawGallery.data.map((item: any) => getStrapiMedia(item?.attributes?.url || item?.url)).filter(Boolean) 
+        : []);
+
+  // Contacts from Strapi Business, settingData, footerData, or company defaults
+  const globalPhone = settingData?.phone || settingData?.contactPhone || footerData?.phone || (Array.isArray(footerData?.contacts) ? footerData.contacts[0]?.phone : '') || '+976 7711-5511';
+  const globalWebsite = settingData?.website || 'https://amuulai.mn';
+  const globalAddress = settingData?.address || settingData?.contactAddress || footerData?.address || 'Улаанбаатар хот, Хан-Уул дүүрэг, Амуулай Тауэр';
+
+  const phone = attrs.contactPhone || attrs.phone || attrs.contact_phone || attrs.telephone || attrs.Phone || attrs.phone_number || globalPhone;
+  const website = attrs.contactWebsite || attrs.website || attrs.contact_website || attrs.url || attrs.link || attrs.Website || globalWebsite;
+  const address = attrs.contactAddress || attrs.address || attrs.contact_address || attrs.location || attrs.Address || globalAddress;
+
+  const hasContacts = true;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Header navItems={navItems} logoUrl={logoUrl} />
-      <div className="bg-slate-50 min-h-screen pt-28 pb-12 lg:pb-20">
+
+      <main className="flex-grow pt-28 pb-16 lg:pb-24">
         <div className="max-w-[1320px] mx-auto px-6">
+          
           {/* Breadcrumb Navigation */}
           <div className="mb-8 flex items-center gap-2 text-sm text-gray-500 font-medium">
             <Link href="/" className="hover:text-[#00829d] transition-colors">
@@ -68,40 +153,44 @@ export default async function BusinessDetailPage({ params }: PageProps) {
               Бизнесүүд
             </Link>
             <span>/</span>
-            <span className="text-gray-900 font-bold">{business.name}</span>
+            <span className="text-gray-900 font-bold">{name}</span>
           </div>
 
           {/* 2-Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* Left Column */}
+            
+            {/* Left Column (7 Spans) */}
             <div className="lg:col-span-7 flex flex-col gap-8">
               <div>
-                <span className="bg-[#00829d]/10 text-[#00829d] px-4 py-1.5 rounded-full text-xs font-bold inline-block mb-3">
-                  Амуулай Бизнес
+                <span className="bg-[#00829d]/10 text-[#00829d] px-4 py-1.5 rounded-full text-xs font-bold inline-block mb-3 border border-[#00829d]/20">
+                  АМУУЛАЙ БИЗНЕС
                 </span>
                 <h1 className="text-3xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-                  {business.name}
+                  {name}
                 </h1>
-                {business.slogan && (
+                {slogan && (
                   <p className="text-xl font-semibold text-[#00829d] italic leading-relaxed">
-                    "{business.slogan}"
+                    "{slogan}"
                   </p>
                 )}
               </div>
 
               {/* Rich Text Description */}
-              <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                {business.description}
-              </div>
+              {description && (
+                <div 
+                  className="prose prose-lg max-w-none text-gray-700 leading-relaxed bg-white p-8 rounded-3xl border border-gray-100 shadow-sm"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              )}
 
               {/* Infographic Image at Bottom */}
-              {business.infographicImage && (
+              {infographicUrl && (
                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Инфографик & Үзүүлэлт</h3>
-                  <div className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden">
+                  <div className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden bg-slate-100">
                     <Image
-                      src={business.infographicImage}
-                      alt={`${business.name} Infographic`}
+                      src={infographicUrl}
+                      alt={`${name} Infographic`}
                       fill
                       className="object-cover"
                     />
@@ -110,74 +199,80 @@ export default async function BusinessDetailPage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Right Column */}
-            <div className="lg:col-span-5 flex flex-col gap-8 sticky top-8">
+            {/* Right Column (5 Spans) */}
+            <div className="lg:col-span-5 flex flex-col gap-8 sticky top-28">
+              
               {/* Large Cover Image */}
-              <div className="relative w-full h-80 rounded-3xl overflow-hidden shadow-md">
-                <Image
-                  src={business.coverImage}
-                  alt={business.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* 2-Image Gallery */}
-              {business.gallery && business.gallery.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
-                  {business.gallery.slice(0, 2).map((imgUrl: string, idx: number) => (
-                    <div key={idx} className="relative h-40 rounded-2xl overflow-hidden shadow-sm">
-                      <Image
-                        src={imgUrl}
-                        alt={`${business.name} gallery ${idx + 1}`}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  ))}
+              {coverUrl && (
+                <div className="relative w-full h-80 rounded-3xl overflow-hidden shadow-md bg-slate-100 border border-gray-100">
+                  <Image
+                    src={coverUrl}
+                    alt={name}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
               )}
 
-              {/* Dark Box with Contact Info */}
-              <div className="bg-slate-900 text-white rounded-3xl p-8 shadow-xl border border-slate-800">
-                <h3 className="text-xl font-bold mb-6 text-white border-b border-slate-800 pb-4">
-                  Холбоо барих
-                </h3>
-                <div className="flex flex-col gap-4 text-sm text-slate-300">
-                  {business.contactPhone && (
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#00829d] font-bold">Утас:</span>
-                      <a href={`tel:${business.contactPhone}`} className="hover:text-white transition-colors">
-                        {business.contactPhone}
-                      </a>
-                    </div>
-                  )}
-                  {business.contactWebsite && (
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#00829d] font-bold">Вэбсайт:</span>
-                      <a
-                        href={business.contactWebsite}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-white transition-colors underline"
-                      >
-                        {business.contactWebsite}
-                      </a>
-                    </div>
-                  )}
-                  {business.contactAddress && (
-                    <div className="flex items-start gap-3">
-                      <span className="text-[#00829d] font-bold shrink-0">Хаяг:</span>
-                      <span className="leading-normal">{business.contactAddress}</span>
-                    </div>
-                  )}
+              {/* Gallery Slider with Auto-Slide */}
+              {galleryList.length > 0 && (
+                <BusinessGallerySlider images={galleryList} name={name} />
+              )}
+
+              {/* Brand Styled Box with Contact Info */}
+              {hasContacts && (
+                <div 
+                  className="text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden group"
+                  style={{
+                    background: 'linear-gradient(135deg, rgb(0, 130, 157) 0%, #006b82 60%, #005c70 100%)',
+                    boxShadow: '0 16px 36px rgba(0, 130, 157, 0.25)'
+                  }}
+                >
+                  <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+                  <h3 className="text-xl font-extrabold mb-6 text-white border-b border-white/20 pb-4 flex items-center justify-between relative z-10">
+                    <span>Холбоо барих</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-300 animate-pulse"></span>
+                  </h3>
+                  <div className="flex flex-col gap-4 text-sm text-slate-100 relative z-10 font-medium">
+                    {phone && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-cyan-200 font-bold shrink-0">Утас:</span>
+                        <a href={`tel:${phone}`} className="hover:text-white transition-colors">
+                          {phone}
+                        </a>
+                      </div>
+                    )}
+                    {website && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-cyan-200 font-bold shrink-0">Вэбсайт:</span>
+                        <a
+                          href={website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-white transition-colors underline break-all"
+                        >
+                          {website}
+                        </a>
+                      </div>
+                    )}
+                    {address && (
+                      <div className="flex items-start gap-3">
+                        <span className="text-cyan-200 font-bold shrink-0">Хаяг:</span>
+                        <span className="leading-normal">{address}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
+
             </div>
+
           </div>
         </div>
-      </div>
-      <Footer />
-    </>
+      </main>
+
+      <Footer footerItems={footerItems} footerData={footerData} settingData={settingData} />
+    </div>
   );
 }
