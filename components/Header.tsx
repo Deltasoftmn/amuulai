@@ -17,7 +17,7 @@ interface HeaderProps {
 }
 
 const defaultNav = [
-  { title: "Бидний тухай", url: "/#about" },
+  { title: "Бидний тухай", url: "/about-us" },
   { 
     title: "Бидний бизнесүүд", 
     url: "/#businesses",

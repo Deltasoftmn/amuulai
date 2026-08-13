@@ -44,6 +44,10 @@ export default function BlockManager({ blocks }: BlockManagerProps) {
           return <ReelsSection key={key} data={block} />;
         }
 
+        if (componentName.includes('timeline') || componentName.includes('history') || componentName.includes('story')) {
+          return <TimelineBlock key={key} data={block} />;
+        }
+
         switch (block.__component) {
           case 'components.products-section':
           case 'components.product-catalog-block':

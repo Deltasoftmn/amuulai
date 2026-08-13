@@ -132,19 +132,10 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
       )}
 
       {/* MAIN PAGE BODY CONTENT */}
-      <main 
-        style={{ 
-          paddingTop: '80px', 
-          paddingBottom: '100px', 
-          background: "linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.98)), url('/pattern2.png') repeat",
-          backgroundSize: '180px',
-          flexGrow: 1 
-        }}
-      >
-        <div className="container" style={{ maxWidth: '1240px', margin: '0 auto', padding: '20px 24px 0' }}>
-          
-          {/* Content / Description Text */}
-          {contentText && (
+      <main className="flex-grow w-full">
+        {/* Content / Description Text */}
+        {contentText && (
+          <div className="container mx-auto px-6 py-10 max-w-[1240px]">
             <div 
               style={{ 
                 fontSize: '17px', 
@@ -153,22 +144,20 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
                 whiteSpace: 'pre-line',
                 backgroundColor: '#ffffff',
                 padding: '40px',
-                borderRadius: '12px',
+                borderRadius: '16px',
                 border: '1px solid #f1f5f9',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
-                marginBottom: '40px'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
               }}
             >
               {contentText}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Render Dynamic Strapi Blocks if present */}
-          {Array.isArray(blocks) && blocks.length > 0 && (
-            <BlockManager blocks={blocks} />
-          )}
-
-        </div>
+        {/* Render Dynamic Strapi Blocks */}
+        {Array.isArray(blocks) && blocks.length > 0 && (
+          <BlockManager blocks={blocks} />
+        )}
       </main>
 
       <Footer footerItems={footerItems} footerData={footerData} settingData={settingData} />

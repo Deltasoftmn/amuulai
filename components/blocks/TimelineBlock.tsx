@@ -4,97 +4,75 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { getStrapiMedia, parseStrapiText } from '@/lib/api';
 
-interface TimelineItem {
-  year: string;
-  subText?: string;
-  title: string;
-  desc: string;
-  image: string;
-  logo?: string;
-}
-
 interface TimelineBlockProps {
   data?: any;
+}
+
+function extractMediaUrl(media: any): string {
+  if (!media) return '';
+  if (typeof media === 'string') return getStrapiMedia(media);
+  if (Array.isArray(media) && media.length > 0) {
+    return extractMediaUrl(media[0]);
+  }
+  if (typeof media === 'object') {
+    const url = 
+      media.url || 
+      media.data?.attributes?.url || 
+      media.data?.url || 
+      media.attributes?.url || 
+      media.image?.url ||
+      media.image?.data?.attributes?.url;
+    if (url) return getStrapiMedia(url);
+  }
+  return '';
 }
 
 export default function TimelineBlock({ data }: TimelineBlockProps) {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  const title = parseStrapiText(data?.title || data?.heading) || 'Бидний түүхэн замнал';
+  const sectionBadge = parseStrapiText(data?.badgeText || data?.badge || data?.categoryName);
+  const title = parseStrapiText(data?.title || data?.heading || data?.name || data?.sectionTitle) || 'Бидний түүхэн замнал';
+  const sectionDesc = parseStrapiText(data?.description || data?.desc || data?.text);
 
-  // Default timeline milestones matching reference design
-  const defaultItems: TimelineItem[] = [
-    {
-      year: '1999',
-      title: 'Компанийн гараа',
-      desc: '1999 оноос эхлэн бид дэлхийн нэр хүндтэй брэндүүдийг Монголын зах зээлд албан ёсоор оруулж ирэн хэрэглэгчиддээ чанартай бүтээгдэхүүн, үйлчилгээг санал болгож эхэлсэн.',
-      image: '/images/who_are_we_main.jpg',
-      logo: '/logo.png'
-    },
-    {
-      year: '2008',
-      title: 'Mild Cosmetics дэлгүүрийн нээлт',
-      desc: 'Мэдлэг, гоо сайхны ертөнцийг Монголд нэвтрүүлэх зорилгоор Японы шилдэг арьс арчилгааны дэлгүүрийн сүлжээ Mild Cosmetics-ийг нээв.',
-      image: '/images/who_are_we_mild.jpg',
-      logo: '/mild.png'
-    },
-    {
-      year: '2014',
-      title: 'Genki эрүүл мэндийн сүлжээ',
-      desc: 'Эрүүл мэнд, эм бэлдмэл, өргөн хэрэглээний бараа бүтээгдэхүүнийг нэг дороос санал болгох Genki дэлгүүрийн сүлжээг амжилттай хөгжүүлэв.',
-      image: '/images/who_are_we_genki.jpg',
-      logo: '/genki.png'
-    },
-    {
-      year: '2018',
-      title: 'OEO Craft & Hobby',
-      desc: 'Бүтээлч хобби, канцеляр болон амьдралын хэв маягийг дэмжих OEO төрөлжсөн дэлгүүрийн анхны салбарыг нээж хэрэглэгчдийн итгэлийг хүлээв.',
-      image: '/images/who_are_we_oeo.jpg',
-      logo: '/oo.png'
-    },
-    {
-      year: '2021',
-      title: 'Олон улсын дистрибьюшн',
-      desc: 'Олон улсын шилдэг үйлдвэрлэгчидтэй түншлэлээ улам өргөжүүлэн, 21 аймгийн сүлжээ дэлгүүрүүдэд шууд дистрибьюц хийх логистикийн төвийг ашиглалтад орууллаа.',
-      image: '/images/who_are_we_ton618.jpg',
-      logo: '/Ton.png'
-    },
-    {
-      year: '2026',
-      title: 'Бид өнөөдөр',
-      desc: '62 салбар дэлгүүр, 7,400+ нэр төрлийн бүтээгдэхүүн, 50+ олон улсын брэндийг Монгол орон даяар амжилттай борлуулан ажиллаж байна.',
-      image: '/images/who_are_we_main.jpg',
-      logo: '/logo.png'
-    }
-  ];
+  // Extract raw timeline array directly from Strapi
+  const rawItems = 
+    (Array.isArray(data?.events) && data.events.length > 0 && data.events) ||
+    (Array.isArray(data?.items) && data.items.length > 0 && data.items) ||
+    (Array.isArray(data?.timeline) && data.timeline.length > 0 && data.timeline) ||
+    (Array.isArray(data?.milestones) && data.milestones.length > 0 && data.milestones) ||
+    (Array.isArray(data?.histories) && data.histories.length > 0 && data.histories) ||
+    (Array.isArray(data?.history) && data.history.length > 0 && data.history) ||
+    (Array.isArray(data?.list) && data.list.length > 0 && data.list) ||
+    (Array.isArray(data?.cards) && data.cards.length > 0 && data.cards) ||
+    (Array.isArray(data?.years) && data.years.length > 0 && data.years) ||
+    [];
 
-  // Strapi dynamic events parsing
-  const rawItems = Array.isArray(data?.events) 
-    ? data.events 
-    : (Array.isArray(data?.items) ? data.items : (Array.isArray(data?.timeline) ? data.timeline : []));
-  
-  const items: TimelineItem[] = rawItems.length > 0 
-    ? rawItems.map((item: any, idx: number) => {
-        const rawImg = typeof item.image === 'string' 
-          ? item.image 
-          : (item.image?.url || item.image?.data?.attributes?.url);
-        
-        const rawLogo = typeof item.logo === 'string'
-          ? item.logo
-          : (item.logo?.url || item.logo?.data?.attributes?.url);
+  const items = rawItems.map((item: any) => {
+    const rawYear = item.year || item.date || item.period || item.time || item.title || '';
+    const rawTitle = item.title || item.heading || item.name || item.subTitle || '';
+    const rawDesc = item.description || item.desc || item.content || item.text || item.detail || item.details || item.body || '';
 
-        return {
-          year: parseStrapiText(item.year) || defaultItems[idx % defaultItems.length].year,
-          title: parseStrapiText(item.title || item.heading) || defaultItems[idx % defaultItems.length].title,
-          desc: parseStrapiText(item.description || item.desc || item.text) || defaultItems[idx % defaultItems.length].desc,
-          image: rawImg ? getStrapiMedia(rawImg) : defaultItems[idx % defaultItems.length].image,
-          logo: rawLogo ? getStrapiMedia(rawLogo) : defaultItems[idx % defaultItems.length].logo
-        };
-      })
-    : defaultItems;
+    const image = extractMediaUrl(item.image || item.img || item.photo || item.media || item.picture) || '/images/who_are_we_main.jpg';
+    const logo = extractMediaUrl(item.logo || item.brandLogo || item.icon) || '/logo.png';
 
-  const activeStory = items[activeIndex] || items[0];
+    const yearStr = parseStrapiText(rawYear) || (typeof rawYear === 'number' || typeof rawYear === 'string' ? String(rawYear) : '');
+
+    return {
+      year: yearStr,
+      title: parseStrapiText(rawTitle) || `${yearStr} оны хөгжил`,
+      desc: parseStrapiText(rawDesc) || sectionDesc || 'Амуулай Групп тасралтгүй өсөн хөгжиж, шинэ боломжуудыг бүтээсээр байна.',
+      image,
+      logo,
+    };
+  }).filter((item: any) => item.year);
+
+  if (!items || items.length === 0) {
+    return null;
+  }
+
+  const safeActiveIndex = activeIndex >= items.length ? 0 : activeIndex;
+  const activeStory = items[safeActiveIndex] || items[0];
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : items.length - 1));
@@ -104,7 +82,6 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
     setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0));
   };
 
-  // Touch handlers for Mobile Swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
   };
@@ -135,25 +112,30 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
       <div className="container" style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
         
         {/* SECTION TITLE */}
-        <div style={{ textAlign: 'left', marginBottom: '50px' }}>
-          <h2 
-            style={{ 
-              fontSize: '42px', 
-              fontWeight: '800', 
-              color: '#0f172a', 
-              margin: '0 0 10px 0',
-              lineHeight: '1.2',
-              letterSpacing: '-0.02em'
-            }}
-          >
-            {title}
-          </h2>
-        </div>
+        {(title || sectionBadge) && (
+          <div style={{ textAlign: 'left', marginBottom: '40px' }}>
+            {sectionBadge && (
+              <span className="inline-block px-4 py-1.5 rounded-full bg-[#00829d]/10 text-[#00829d] text-xs font-extrabold uppercase tracking-wider mb-3 border border-[#00829d]/20">
+                {sectionBadge}
+              </span>
+            )}
+            <h2 
+              style={{ 
+                fontSize: '42px', 
+                fontWeight: '800', 
+                color: '#0f172a', 
+                margin: '0 0 10px 0',
+                lineHeight: '1.2',
+                letterSpacing: '-0.02em'
+              }}
+            >
+              {title}
+            </h2>
+          </div>
+        )}
 
-        {/* TOP TIMELINE YEARS BAR (ANUNGOO STYLE) */}
+        {/* TOP TIMELINE YEARS BAR */}
         <div style={{ position: 'relative', marginBottom: '60px', padding: '0 20px' }}>
-          
-          {/* HORIZONTAL DASHED/DOTTED CONNECTOR LINE */}
           <div 
             style={{ 
               position: 'absolute', 
@@ -166,7 +148,6 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
             }} 
           />
 
-          {/* YEARS ROW */}
           <div 
             style={{ 
               display: 'flex', 
@@ -176,8 +157,8 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
               zIndex: 2 
             }}
           >
-            {items.map((item, idx) => {
-              const isActive = activeIndex === idx;
+            {items.map((item: any, idx: number) => {
+              const isActive = safeActiveIndex === idx;
 
               return (
                 <div 
@@ -192,7 +173,6 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  {/* Year Text */}
                   <span 
                     style={{ 
                       fontSize: isActive ? '18px' : '15px', 
@@ -205,7 +185,6 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
                     {item.year}
                   </span>
 
-                  {/* Dot Marker */}
                   <div 
                     style={{ 
                       width: isActive ? '20px' : '14px', 
@@ -223,125 +202,127 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
           </div>
         </div>
 
-        {/* BOTTOM ACTIVE STORY CONTENT (SPLIT VIEW) */}
-        <div 
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(12, 1fr)', 
-            gap: '45px', 
-            alignItems: 'center',
-            minHeight: '400px'
-          }}
-        >
-          {/* LEFT COLUMN: LOGO + DESCRIPTION TEXT + NAV ARROWS */}
-          <div style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            
-            {/* Logo / Badge */}
-            {activeStory.logo && (
-              <div style={{ marginBottom: '24px', position: 'relative', width: '120px', height: '45px' }}>
-                <Image 
-                  src={activeStory.logo} 
-                  alt={activeStory.title} 
-                  fill 
-                  style={{ objectFit: 'contain', objectPosition: 'left' }} 
+        {/* BOTTOM ACTIVE STORY CONTENT */}
+        {activeStory && (
+          <div 
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(12, 1fr)', 
+              gap: '45px', 
+              alignItems: 'center',
+              minHeight: '400px'
+            }}
+          >
+            <div style={{ gridColumn: 'span 6', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              {activeStory.logo && (
+                <div style={{ marginBottom: '24px', position: 'relative', width: '120px', height: '45px' }}>
+                  <Image 
+                    src={activeStory.logo} 
+                    alt={activeStory.title || 'Logo'} 
+                    fill 
+                    style={{ objectFit: 'contain', objectPosition: 'left' }} 
+                  />
+                </div>
+              )}
+
+              {activeStory.title && (
+                <h3 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '16px', lineHeight: '1.3' }}>
+                  {activeStory.title}
+                </h3>
+              )}
+
+              {activeStory.desc && (
+                <div 
+                  style={{ fontSize: '15px', color: '#475569', lineHeight: '1.8', marginBottom: '35px', maxWidth: '520px' }}
+                  dangerouslySetInnerHTML={{ __html: activeStory.desc }}
                 />
+              )}
+
+              {items.length > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <button 
+                    onClick={handlePrev}
+                    aria-label="Previous story"
+                    style={{ 
+                      width: '42px', 
+                      height: '42px', 
+                      borderRadius: '50%', 
+                      border: '1px solid #cbd5e1', 
+                      background: '#ffffff', 
+                      color: '#00829d', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }}
+                    className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
+                  >
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  <button 
+                    onClick={handleNext}
+                    aria-label="Next story"
+                    style={{ 
+                      width: '42px', 
+                      height: '42px', 
+                      borderRadius: '50%', 
+                      border: '1px solid #cbd5e1', 
+                      background: '#ffffff', 
+                      color: '#00829d', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }}
+                    className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
+                  >
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {activeStory.image && (
+              <div style={{ gridColumn: 'span 6' }}>
+                <div 
+                  style={{ 
+                    position: 'relative', 
+                    width: '100%', 
+                    height: '420px', 
+                    borderRadius: '32px', 
+                    overflow: 'hidden', 
+                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid #f1f5f9'
+                  }}
+                >
+                  <Image 
+                    src={activeStory.image} 
+                    alt={activeStory.title || 'Image'} 
+                    fill 
+                    style={{ objectFit: 'cover' }} 
+                    sizes="(max-width: 1024px) 100vw, 50vw" 
+                    className="transition-all duration-700 ease-out"
+                    priority
+                  />
+                </div>
               </div>
             )}
-
-            {/* Active Year Title */}
-            <h3 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '16px', lineHeight: '1.3' }}>
-              {activeStory.title}
-            </h3>
-
-            {/* Active Year Story Description */}
-            <p style={{ fontSize: '15px', color: '#475569', lineHeight: '1.8', marginBottom: '35px', maxWidth: '520px' }}>
-              {activeStory.desc}
-            </p>
-
-            {/* LEFT & RIGHT NAVIGATION ARROWS */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <button 
-                onClick={handlePrev}
-                aria-label="Previous story"
-                style={{ 
-                  width: '42px', 
-                  height: '42px', 
-                  borderRadius: '50%', 
-                  border: '1px solid #cbd5e1', 
-                  background: '#ffffff', 
-                  color: '#00829d', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                }}
-                className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
-              >
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              <button 
-                onClick={handleNext}
-                aria-label="Next story"
-                style={{ 
-                  width: '42px', 
-                  height: '42px', 
-                  borderRadius: '50%', 
-                  border: '1px solid #cbd5e1', 
-                  background: '#ffffff', 
-                  color: '#00829d', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                }}
-                className="hover:bg-[#00829d] hover:text-white hover:border-[#00829d]"
-              >
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
           </div>
-
-          {/* RIGHT COLUMN: LARGE ROUNDED MILESTONE PHOTO */}
-          <div style={{ gridColumn: 'span 6' }}>
-            <div 
-              style={{ 
-                position: 'relative', 
-                width: '100%', 
-                height: '420px', 
-                borderRadius: '32px', 
-                overflow: 'hidden', 
-                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #f1f5f9'
-              }}
-            >
-              <Image 
-                src={activeStory.image} 
-                alt={activeStory.title} 
-                fill 
-                style={{ objectFit: 'cover' }} 
-                sizes="(max-width: 1024px) 100vw, 50vw" 
-                className="transition-all duration-700 ease-out"
-                priority
-              />
-            </div>
-          </div>
-
-        </div>
+        )}
 
       </div>
 
-      {/* MOBILE RESPONSIVE MEDIA QUERIES */}
       <style jsx>{`
         @media (max-width: 1024px) {
           .timeline-slider-section .container > div:last-child {
@@ -356,4 +337,3 @@ export default function TimelineBlock({ data }: TimelineBlockProps) {
     </section>
   );
 }
-

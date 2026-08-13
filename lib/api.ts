@@ -326,6 +326,12 @@ export async function getPageBySlug(slug: string) {
   try {
     const params = {
       'filters[slug][$eq]': slug,
+      'populate[blocks][on][components.who-are-we][populate]': '*',
+      'populate[blocks][on][shared.impact-section][populate]': '*',
+      'populate[blocks][on][components.timeline-section][populate][events][populate]': '*',
+      'populate[blocks][on][components.vision-mission-section][populate]': '*',
+      'populate[blocks][on][components.tabs-section][populate]': '*',
+      'populate[blocks][on][components.team-section][populate]': '*',
       'populate[blocks][populate]': '*',
       'populate[FeaturedImage]': 'true',
     };
