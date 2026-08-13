@@ -287,7 +287,7 @@ body {
 }
 /* Mobile Menu */
 .mobile-toggle {
-  display: none;
+  display: none !important;
   background: none;
   border: none;
   cursor: pointer;
@@ -1343,11 +1343,11 @@ body {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .nav {
-    display: none;
+    display: none !important;
   }
 
   .mobile-toggle {
-    display: block;
+    display: flex !important;
   }
 
   .hero {
@@ -1396,7 +1396,7 @@ body {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   .stat-item::after {
