@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play } from 'lucide-react';
+import { Play, X } from 'lucide-react';
 import { getStrapiMedia } from '@/lib/api';
 
 export interface ReelItem {
@@ -49,7 +49,17 @@ function getMediaUrl(media: any): string | null {
   return url ? getStrapiMedia(url) : null;
 }
 
+// Helper to extract YouTube Video ID from various URL formats (watch, shorts, embed, youtu.be)
+function parseYouTubeVideoId(url?: string): string | null {
+  if (!url || typeof url !== 'string') return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
 export default function ReelsSection({ data }: ReelsSectionProps) {
+  const [activeYouTubeId, setActiveYouTubeId] = useState<string | null>(null);
+
   const blockData = data?.attributes || data || {};
   const title = blockData?.title || blockData?.sectionTitle || '';
   const description = blockData?.description || blockData?.desc || '';
@@ -89,21 +99,21 @@ export default function ReelsSection({ data }: ReelsSectionProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           {visibleReels.map((reel: any, index: number) => {
             const reelObj = reel?.attributes || reel || {};
-
-            const strapiThumb = getMediaUrl(reelObj.thumbnail || reelObj.image || reelObj.cover);
-            const thumbnailUrl = strapiThumb || FALLBACK_THUMBNAILS[index % FALLBACK_THUMBNAILS.length];
-            const videoUrl = reelObj.videoUrl || reelObj.url || reelObj.link || '#';
+            const videoUrl = reelObj.videoUrl || reelObj.url || reelObj.link || '';
             const reelTitle = reelObj.title || reelObj.caption || reelObj.name || '';
 
-            return (
-              <a
-                key={reel.id || index}
-                href={videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={reelTitle || `Reel ${index + 1}`}
-                className="group relative block w-full aspect-[9/16] rounded-3xl overflow-hidden bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 focus:outline-hidden focus:ring-4 focus:ring-emerald-500/30 text-left"
-              >
+            // Detect YouTube URL
+            const youtubeId = parseYouTubeVideoId(videoUrl);
+
+            // Thumbnail selection logic: Prioritize YouTube thumbnail for YouTube URLs directly -> custom Strapi thumbnail -> Unsplash fallback
+            const strapiThumb = getMediaUrl(reelObj.thumbnail || reelObj.image || reelObj.cover);
+            const thumbnailUrl = youtubeId 
+              ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` 
+              : (strapiThumb || FALLBACK_THUMBNAILS[index % FALLBACK_THUMBNAILS.length]);
+
+            // Inner card component
+            const CardContent = (
+              <>
                 {/* Background Thumbnail Image */}
                 {thumbnailUrl && (
                   <Image
@@ -134,12 +144,71 @@ export default function ReelsSection({ data }: ReelsSectionProps) {
                     </p>
                   </div>
                 )}
+              </>
+            );
+
+            // If YouTube: render interactive button opening inline modal player
+            if (youtubeId) {
+              return (
+                <button
+                  key={reel.id || index}
+                  onClick={() => setActiveYouTubeId(youtubeId)}
+                  aria-label={reelTitle || `YouTube Reel ${index + 1}`}
+                  className="group relative block w-full aspect-[9/16] rounded-3xl overflow-hidden bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 focus:outline-hidden focus:ring-4 focus:ring-[#00829d]/30 text-left cursor-pointer border-0"
+                >
+                  {CardContent}
+                </button>
+              );
+            }
+
+            // If Facebook or Non-YouTube: render standard <a> link opening in new tab
+            return (
+              <a
+                key={reel.id || index}
+                href={videoUrl || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={reelTitle || `Reel ${index + 1}`}
+                className="group relative block w-full aspect-[9/16] rounded-3xl overflow-hidden bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 focus:outline-hidden focus:ring-4 focus:ring-[#00829d]/30 text-left"
+              >
+                {CardContent}
               </a>
             );
           })}
         </div>
 
       </div>
+
+      {/* YouTube Interactive Video Modal Player */}
+      {activeYouTubeId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md transition-all duration-300 animate-fade-in"
+          onClick={() => setActiveYouTubeId(null)}
+        >
+          <div
+            className="relative w-full max-w-4xl aspect-[16/9] bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveYouTubeId(null)}
+              className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-[#00829d] text-white flex items-center justify-center transition-all duration-200 shadow-lg cursor-pointer"
+              aria-label="Close video player"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* YouTube Embedded Player */}
+            <iframe
+              src={`https://www.youtube.com/embed/${activeYouTubeId}?autoplay=1&rel=0&modestbranding=1`}
+              title="YouTube Video Player"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
