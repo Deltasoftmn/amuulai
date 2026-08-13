@@ -369,3 +369,23 @@ export async function getSettingData() {
   });
   return res?.data?.attributes || res?.data || null;
 }
+
+export async function getFaviconUrl(): Promise<string> {
+  try {
+    const setting = await getSettingData();
+    const faviconMedia = setting?.favicon?.url || setting?.favicon?.data?.attributes?.url;
+    if (faviconMedia) {
+      return getStrapiMedia(faviconMedia);
+    }
+
+    const res = await fetchStrapiAPI<any>('/favicon', { populate: '*' });
+    const favData = res?.data?.attributes || res?.data;
+    const favUrl = favData?.icon?.url || favData?.file?.url || favData?.url || favData?.favicon?.url || favData?.favicon?.data?.attributes?.url;
+    if (favUrl) {
+      return getStrapiMedia(favUrl);
+    }
+  } catch (err) {
+    console.error('Error fetching favicon from Strapi:', err);
+  }
+  return '/favicon.ico';
+}

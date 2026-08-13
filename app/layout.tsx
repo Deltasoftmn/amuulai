@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { getSettingData, getStrapiMedia } from "@/lib/api";
+import { getSettingData, getFaviconUrl, getStrapiMedia } from "@/lib/api";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -10,16 +10,24 @@ const inter = Inter({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getSettingData();
-  const faviconUrl = setting?.favicon?.url ? getStrapiMedia(setting.favicon.url) : '/favicon.ico';
+  const [setting, faviconUrl] = await Promise.all([
+    getSettingData(),
+    getFaviconUrl(),
+  ]);
   
+  const isPng = faviconUrl.toLowerCase().includes('.png');
+  const isSvg = faviconUrl.toLowerCase().includes('.svg');
+  const mimeType = isPng ? 'image/png' : isSvg ? 'image/svg+xml' : 'image/x-icon';
+
   return {
     title: setting?.siteName || "Амуулай Групп ХХК",
     description: setting?.seoDescription || '"Амуулай Групп" ХХК нь 2007 онд Монголын FMCG зах зээлд тэргүүлэгчдийн эгнээнд байж, Монголынхоо хэрэглэгчдэд дэлхийн гэр ахуй, өргөн хэрэглээний шилдэг бүтээгдэхүүнүүдийг хүргэж байна.',
     icons: {
-      icon: faviconUrl,
-      shortcut: faviconUrl,
-      apple: faviconUrl,
+      icon: [
+        { url: faviconUrl, type: mimeType },
+      ],
+      shortcut: [{ url: faviconUrl, type: mimeType }],
+      apple: [{ url: faviconUrl, type: mimeType }],
     },
   };
 }
@@ -29,14 +37,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const setting = await getSettingData();
-  const faviconUrl = setting?.favicon?.url ? getStrapiMedia(setting.favicon.url) : '/favicon.ico';
+  const faviconUrl = await getFaviconUrl();
+  const isPng = faviconUrl.toLowerCase().includes('.png');
+  const isSvg = faviconUrl.toLowerCase().includes('.svg');
+  const mimeType = isPng ? 'image/png' : isSvg ? 'image/svg+xml' : 'image/x-icon';
 
   return (
     <html lang="mn" className={`${inter.variable} antialiased`}>
       <head>
-        <link rel="icon" href={faviconUrl} />
-        <link rel="apple-touch-icon" href={faviconUrl} />
+        <link rel="icon" type={mimeType} href={faviconUrl} key="icon" />
+        <link rel="shortcut icon" href={faviconUrl} key="shortcut-icon" />
+        <link rel="apple-touch-icon" href={faviconUrl} key="apple-icon" />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
