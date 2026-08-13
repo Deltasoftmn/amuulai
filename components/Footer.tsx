@@ -92,7 +92,7 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
       style={{ 
         backgroundColor: 'rgb(0, 130, 157)', 
         color: '#ffffff',
-        padding: '90px 0 60px 0',
+        padding: '100px 0 85px 0',
         position: 'relative',
         overflow: 'visible'
       }}
@@ -112,182 +112,194 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
 
       <div className="relative z-10 container mx-auto px-6 max-w-[1240px]" style={{ maxWidth: '1240px', margin: '0 auto' }}>
         
-        {/* MAIN FOOTER TOP GRID: md:col-span-6, md:col-span-2, md:col-span-2, md:col-span-2 */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 mb-16! items-start">
+        {/* MAIN FOOTER TOP GRID: LEFT (LOGO & DESCRIPTION) + RIGHT (2-COLUMN GRID FOR 4 SECTIONS) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 mb-30 items-start">
           
-          {/* COLUMN 1: LOGO + TAGLINE FROM STRAPI (6 SPANS) */}
-          <div className="md:col-span-6 flex flex-col justify-between pr-4!">
-            <div className="mb-4!">
+          {/* LEFT SIDE: LOGO + TAGLINE (5 SPANS) */}
+          <div className="lg:col-span-5 flex flex-col justify-between pr-0 lg:pr-6">
+            <div className="mb-5">
               <Link href="/" className="inline-block">
                 <Image 
                   src={logoUrl} 
                   alt="Amuulai Group" 
-                  width={200} 
-                  height={52} 
-                  className="object-contain max-h-14 w-auto"
+                  width={220} 
+                  height={58} 
+                  className="object-contain max-h-16 w-auto"
                   priority 
                 />
               </Link>
             </div>
-            <p className="text-xs leading-relaxed text-emerald-100/90 font-normal max-w-lg">
+            <p className="text-sm sm:text-base leading-relaxed text-[#e2e8f0] font-normal max-w-lg">
               {description}
             </p>
           </div>
 
-          {/* COLUMN 2: ХОЛБОО БАРИХ FROM STRAPI (2 SPANS) */}
-          <div className="md:col-span-2">
-            <h4 className="text-base font-extrabold text-white mb-6! tracking-wider uppercase">
-              {activeFooterData?.title || 'Холбоо барих'}
-            </h4>
-            <ul className="space-y-4 text-xs text-emerald-100/90 font-normal">
-              <li>
-                <a href={phoneUrl} className="hover:text-white transition-colors">
-                  {phoneValue}
-                </a>
-              </li>
-              <li>
-                <a href={emailUrl} className="hover:text-white transition-colors break-words">
-                  {emailValue}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* COLUMN 3: МАНАЙ ХАЯГ FROM STRAPI (2 SPANS) */}
-          <div className="md:col-span-2 relative">
-            <h4 className="text-base font-extrabold text-white mb-6! tracking-wider uppercase">
-              Манай хаяг
-            </h4>
-            <p className="text-xs leading-relaxed text-emerald-100/90 font-normal mb-3">
-              {addressValue}
-            </p>
-
-            {/* GOOGLE MAP LINK WITH HOVER PREVIEW OVERLAY */}
-            <div 
-              className="relative inline-block"
-              onMouseEnter={() => setShowMapPreview(true)}
-              onMouseLeave={() => setShowMapPreview(false)}
-            >
-              <a 
-                href={googleMapUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-200 hover:text-white underline transition-colors cursor-pointer py-1"
-              >
-                <span>📍 Google Map</span>
-              </a>
-
-              {/* HOVER PREVIEW POPOVER CARD */}
-              {showMapPreview && (
-                <div 
-                  className="absolute bottom-full left-0 mb-3 z-50 w-80 h-56 bg-white rounded-2xl p-1.5 shadow-2xl border border-slate-200 animate-fade-in pointer-events-auto"
-                  style={{ filter: 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3))' }}
-                >
-                  <div className="w-full h-full rounded-xl overflow-hidden relative">
-                    <iframe
-                      title="Google Map Location Preview"
-                      src={mapEmbedSrc}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                    />
-                  </div>
-                  {/* Arrow Indicator */}
-                  <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white rotate-45 border-b border-r border-slate-200" />
-                </div>
-              )}
+          {/* RIGHT SIDE: 2-COLUMN GRID (7 SPANS) CONTAINING 4 SECTIONS */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-8 sm:gap-x-12">
+            
+            {/* 1. ХОЛБОО БАРИХ */}
+            <div>
+              <h4 className="text-lg font-extrabold text-white mb-3 tracking-wider uppercase">
+                {activeFooterData?.title || 'Холбоо барих'}
+              </h4>
+              <ul className="space-y-3 text-sm sm:text-base text-[#e2e8f0] font-normal">
+                <li>
+                  <a href={phoneUrl} className="hover:text-white transition-colors">
+                    {phoneValue}
+                  </a>
+                </li>
+                <li>
+                  <a href={emailUrl} className="hover:text-white transition-colors break-words">
+                    {emailValue}
+                  </a>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* COLUMN 4: ХОЛБООС / SOCIAL FROM STRAPI (2 SPANS) */}
-          <div className="md:col-span-2">
-            <h4 className="text-base font-extrabold text-white mb-6! tracking-wider uppercase">
-              Холбоос
-            </h4>
-            <ul className="space-y-3.5 text-sm text-emerald-100/90 font-normal">
-              {socialContacts.length > 0 ? (
-                socialContacts.map((sc: any, idx: number) => (
-                  <li key={sc.id || idx}>
-                    <a 
-                      href={sc.url || '#'} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="hover:text-white transition-colors"
-                    >
-                      {sc.label || sc.value}
-                    </a>
-                  </li>
-                ))
-              ) : (
-                <>
-                  <li>
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                      Facebook
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                      Instagram
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                      LinkedIn
-                    </a>
-                  </li>
-                </>
-              )}
-            </ul>
+            {/* 2. МАНАЙ ХАЯГ */}
+            <div className="relative">
+              <h4 className="text-lg font-extrabold text-white mb-3 tracking-wider uppercase">
+                Манай хаяг
+              </h4>
+              <p className="text-sm sm:text-base leading-relaxed text-[#e2e8f0] font-normal mb-2">
+                {addressValue}
+              </p>
+              <div 
+                className="relative inline-block"
+                onMouseEnter={() => setShowMapPreview(true)}
+                onMouseLeave={() => setShowMapPreview(false)}
+              >
+                <a 
+                  href={googleMapUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#e2e8f0] hover:text-white underline transition-colors cursor-pointer py-1"
+                >
+                  <span>📍 Google Map</span>
+                </a>
+
+                {/* HOVER PREVIEW POPOVER CARD */}
+                {showMapPreview && (
+                  <div 
+                    className="absolute bottom-full left-0 mb-3 z-50 w-80 h-56 bg-white rounded-2xl p-1.5 shadow-2xl border border-slate-200 animate-fade-in pointer-events-auto"
+                    style={{ filter: 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3))' }}
+                  >
+                    <div className="w-full h-full rounded-xl overflow-hidden relative">
+                      <iframe
+                        title="Google Map Location Preview"
+                        src={mapEmbedSrc}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="absolute -bottom-2 left-6 w-4 h-4 bg-white rotate-45 border-b border-r border-slate-200" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 3. ЦЭС (MENU) */}
+            <div>
+              <h4 className="text-lg font-extrabold text-white mb-3 tracking-wider uppercase">
+                Цэс
+              </h4>
+              <ul className="space-y-3 text-sm sm:text-base text-[#e2e8f0] font-normal">
+                {activeFooterItems && activeFooterItems.length > 0 ? (
+                  activeFooterItems.map((item: any, idx: number) => (
+                    <li key={idx}>
+                      <Link 
+                        href={item.url || item.href || '#'} 
+                        className="hover:text-white transition-colors"
+                      >
+                        {item.title || item.label}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <>
+                    <li>
+                      <Link href="/" className="hover:text-white transition-colors">
+                        Нүүр хуудас
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/about-us" className="hover:text-white transition-colors">
+                        Бидний тухай
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/brand" className="hover:text-white transition-colors">
+                        Брэнд, бүтээгдэхүүн
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/careers" className="hover:text-white transition-colors">
+                        Карьер
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/news" className="hover:text-white transition-colors">
+                        Мэдээ мэдээлэл
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </div>
+
+            {/* 4. ХОЛБООС (SOCIAL LINKS) */}
+            <div>
+              <h4 className="text-lg font-extrabold text-white mb-3 tracking-wider uppercase">
+                Холбоос
+              </h4>
+              <ul className="space-y-3 text-sm sm:text-base text-[#e2e8f0] font-normal">
+                {socialContacts.length > 0 ? (
+                  socialContacts.map((sc: any, idx: number) => (
+                    <li key={sc.id || idx}>
+                      <a 
+                        href={sc.url || '#'} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="hover:text-white transition-colors"
+                      >
+                        {sc.label || sc.value}
+                      </a>
+                    </li>
+                  ))
+                ) : (
+                  <>
+                    <li>
+                      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        Facebook
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        Instagram
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        LinkedIn
+                      </a>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </div>
+
           </div>
 
         </div>
 
-        {/* BOTTOM SEPARATOR LINE & HORIZONTAL NAVIGATION MENU FROM STRAPI */}
-        <div className="w-full border-t border-emerald-800/80 pt-8! mt-8!">
-          
-          {/* DYNAMIC STRAPI FOOTER MENU ROW (ХӨНДЛӨНГӨӨР) */}
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16 text-sm font-semibold text-emerald-100/90 mb-8!">
-            {activeFooterItems && activeFooterItems.length > 0 ? (
-              activeFooterItems.map((item: any, idx: number) => (
-                <Link 
-                  key={idx} 
-                  href={item.url || item.href || '#'} 
-                  className="hover:text-white transition-colors"
-                >
-                  {item.title || item.label}
-                </Link>
-              ))
-            ) : (
-              <>
-                <Link href="/" className="hover:text-white transition-colors">
-                  Нүүр хуудас
-                </Link>
-                <Link href="/about-us" className="hover:text-white transition-colors">
-                  Бидний тухай
-                </Link>
-                <Link href="/brand" className="hover:text-white transition-colors">
-                  Брэнд, бүтээгдэхүүн
-                </Link>
-                <Link href="/careers" className="hover:text-white transition-colors">
-                  Карьер
-                </Link>
-                <Link href="/news" className="hover:text-white transition-colors">
-                  Мэдээ мэдээлэл
-                </Link>
-                <a href="#contact" className="hover:text-white transition-colors">
-                  Холбоо барих
-                </a>
-              </>
-            )}
-          </div>
-
-          {/* COPYRIGHT LINE FROM STRAPI */}
-          <div className="text-center text-xs text-emerald-200/70 font-medium tracking-wide">
+        {/* COPYRIGHT */}
+        <div className="w-full pt-10 mt-12 text-center">
+          <p className="text-sm text-[#e2e8f0]/90 font-medium tracking-wide">
             {copyright}
-          </div>
-
+          </p>
         </div>
 
       </div>
