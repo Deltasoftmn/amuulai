@@ -103,20 +103,55 @@ export default async function CareersPage() {
     }
   ];
 
+  // Sample Company Events & Team Activities
+  const companyEvents = [
+    {
+      title: 'Жилийн эцэст зохион байгуулагддаг "Амуулай Кубок" Спорт Наадам',
+      category: 'Спорт & Эрүүл Мэнд',
+      date: '2025.10.20',
+      image: '/images/who_are_we_genki.jpg',
+      desc: 'Ажилтнуудынхаа эрүүл мэнд, спортын идэвхийг дэмжих зорилгоор баг хамт олноороо өрсөлддөг уламжлалт спорт наадам.'
+    },
+    {
+      title: 'Зуны Багийн Аялал & Teambuilding Эвэнт',
+      category: 'Багийн Аялал',
+      date: '2025.07.15',
+      image: '/images/who_are_we_main.jpg',
+      desc: 'Жил бүр уламжлал болгон байгалийн үзэсгэлэнт газарт баг хамт олноороо амарч, багийн ажиллагаагаа бэхжүүлдэг цугларалт.'
+    },
+    {
+      title: 'Шинэ Жилийн Гала Эвэнт & Оны Шилдгүүд',
+      category: 'Баярын Эвэнт',
+      date: '2025.12.28',
+      image: '/images/who_are_we_mild.jpg',
+      desc: 'Оны шилдэг ажилтнуудыг шалгаруулж, хамт олноороо нэгэн үдшийг баяр хөөртэй, дурсгалтай өнгөрүүлдэг Гала эвэнт.'
+    },
+    {
+      title: 'Нийгмийн Хариуцлага & "Эко Амуулай" Мод Тарих Өдөр',
+      category: 'CSR & Эко Аян',
+      date: '2026.05.12',
+      image: '/images/who_are_we_oeo.jpg',
+      desc: 'Эх байгальдаа оруулах хувь нэмэр болгон жил бүр ажилтнууд нэгдэн мод тарих, нийгэмд ээлтэй сайн үйлсийн аян зохион байгуулдаг.'
+    }
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header navItems={navItems} logoUrl={logoUrl} transparentOnTop={true} />
 
       {/* 1. HERO SECTION */}
-      <section className="relative w-full min-h-[640px] bg-slate-900 overflow-hidden flex items-center pt-24 pb-16">
+      <section 
+        className="relative w-full min-h-[640px] overflow-hidden flex items-center pt-24 pb-16"
+        style={{ background: 'linear-gradient(135deg, #001b24 0%, #003340 50%, #004b5c 100%)' }}
+      >
         <Image
           src="/images/who_are_we_main.jpg"
           alt="Амуулай Групп Баг Хамт Олон"
           fill
-          className="object-cover opacity-35"
+          className="object-cover opacity-25"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001b24]/95 via-[#002f3b]/85 to-transparent z-10" />
 
         <div className="container mx-auto px-6 max-w-[1240px] relative z-20">
           <div className="max-w-2xl text-white">
@@ -142,24 +177,29 @@ export default async function CareersPage() {
       </section>
 
       {/* STATS STRIP */}
-      <section className="bg-[#006b82] text-white py-8 border-b border-[#005c70]">
+      <section 
+        className="text-white py-10 relative overflow-hidden border-b border-[#005c70]"
+        style={{
+          background: 'linear-gradient(135deg, rgb(0, 130, 157) 0%, #006b82 60%, #005c70 100%)'
+        }}
+      >
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">500+</div>
-              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Багийн гишүүд</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-white">500+</div>
+              <div className="text-xs md:text-sm text-cyan-100 font-medium uppercase tracking-wider mt-1">Багийн гишүүд</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">98%</div>
-              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Ажилтны сэтгэл ханамж</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-white">98%</div>
+              <div className="text-xs md:text-sm text-cyan-100 font-medium uppercase tracking-wider mt-1">Ажилтны сэтгэл ханамж</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">24+</div>
-              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Жил тасралтгүй өсөлт</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-white">24+</div>
+              <div className="text-xs md:text-sm text-cyan-100 font-medium uppercase tracking-wider mt-1">Жил тасралтгүй өсөлт</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-extrabold text-cyan-200">50+</div>
-              <div className="text-xs md:text-sm text-slate-100/80 font-medium uppercase tracking-wider mt-1">Олон улсын брэнд</div>
+              <div className="text-3xl md:text-4xl font-extrabold text-white">50+</div>
+              <div className="text-xs md:text-sm text-cyan-100 font-medium uppercase tracking-wider mt-1">Олон улсын брэнд</div>
             </div>
           </div>
         </div>
@@ -225,7 +265,10 @@ export default async function CareersPage() {
       </section>
 
       {/* 3. WORK ENVIRONMENT (АЖИЛЛАХ ОРЧИН) */}
-      <section className="py-20 bg-slate-900 text-white relative">
+      <section 
+        className="py-20 text-white relative overflow-hidden border-t border-[#00829d]/20"
+        style={{ background: 'linear-gradient(180deg, #00222b 0%, #003745 50%, #00222b 100%)' }}
+      >
         <div className="container mx-auto px-6 max-w-[1240px]">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-2 block">
@@ -331,21 +374,73 @@ export default async function CareersPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((t, idx) => (
-              <div key={idx} className="bg-slate-50 p-8 rounded-2xl border border-slate-200/70 flex flex-col justify-between relative">
+              <div key={idx} className="bg-slate-50 p-8 rounded-3xl border border-slate-200/80 hover:border-[#00829d]/30 hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative group">
                 <div>
-                  <div className="text-[#00829d] text-4xl font-serif mb-4 leading-none">&ldquo;</div>
-                  <p className="text-slate-700 text-sm leading-relaxed mb-6 italic">
+                  <div className="text-[#00829d] text-5xl font-serif mb-4 leading-none">&ldquo;</div>
+                  <p className="text-slate-700 text-sm md:text-base leading-relaxed mb-8 italic font-normal">
                     {t.quote}
                   </p>
                 </div>
-                <div className="flex items-center gap-4 pt-4 border-t border-slate-200/60">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#00829d] flex-shrink-0">
+                <div className="flex items-center gap-5 pt-6 border-t border-slate-200/80">
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#00829d] shadow-md flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                     <Image src={t.image} alt={t.name} fill className="object-cover" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-slate-900">{t.name}</h4>
-                    <p className="text-xs text-[#00829d] font-semibold">{t.role}</p>
-                    <span className="text-[11px] text-slate-400">{t.tenure}</span>
+                    <h4 className="text-lg font-extrabold text-slate-900">{t.name}</h4>
+                    <p className="text-xs text-[#00829d] font-bold mt-0.5">{t.role}</p>
+                    <span className="text-xs text-slate-400 font-medium mt-1 block">{t.tenure}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. COMPANY EVENTS SECTION (АЖИЛТНУУДЫН ДУНД БОЛСОН АРГА ХЭМЖЭЭ, ҮЙЛ ЯВДЛУУД) */}
+      <section className="py-20 bg-slate-50 border-t border-slate-200/60">
+        <div className="container mx-auto px-6 max-w-[1240px]">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#00829d]/10 text-[#00829d] font-extrabold text-xs tracking-widest uppercase mb-3 border border-[#00829d]/20">
+              🎉 ХАМТ ОЛОН & АРГА ХЭМЖЭЭ
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              Ажилтнуудын дунд болсон арга хэмжээ, үйл явдлууд
+            </h2>
+            <p className="text-slate-600 text-base mt-4 leading-relaxed">
+              Амуулай Группийн ажилтнуудын идэвхтэй амьдрал, багийн аялал, спорт, урлаг болон нийгмийн хариуцлагын арга хэмжээнүүдээс.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {companyEvents.map((ev, idx) => (
+              <div 
+                key={idx}
+                className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={ev.image}
+                      alt={ev.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-[#00829d] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md">
+                      {ev.category}
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="text-xs text-gray-400 font-medium mb-2 flex items-center gap-1.5">
+                      <span>🗓️</span>
+                      <span>{ev.date}</span>
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug group-hover:text-[#00829d] transition-colors line-clamp-2">
+                      {ev.title}
+                    </h3>
+                    <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">
+                      {ev.desc}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -363,8 +458,8 @@ export default async function CareersPage() {
             rel="noopener noreferrer"
             className="group block relative w-full rounded-2xl md:rounded-3xl p-6 sm:p-8 md:px-12 md:py-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, rgb(0, 130, 157) 0%, #00a896 50%, #0099b8 100%)',
-              boxShadow: '0 20px 40px rgba(0, 130, 157, 0.25)'
+              background: 'linear-gradient(135deg, rgb(0, 130, 157) 0%, #006b82 60%, #005c70 100%)',
+              boxShadow: '0 20px 40px rgba(0, 130, 157, 0.28)'
             }}
           >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
@@ -407,7 +502,11 @@ export default async function CareersPage() {
       </section>
 
       {/* 7. CTA SECTION (БИДЭНТЭЙ НЭГДЭХ / ШИНЭ БОЛОМЖУУД) */}
-      <section id="join-us" className="py-20 bg-slate-900 text-white relative overflow-hidden border-t border-slate-800">
+      <section 
+        id="join-us" 
+        className="py-20 text-white relative overflow-hidden border-t border-[#00829d]/20"
+        style={{ background: 'linear-gradient(180deg, #001f28 0%, #003440 50%, #001f28 100%)' }}
+      >
         {/* Glowing Background Orbs */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-[#00829d]/20 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute top-1/2 right-1/4 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-cyan-500/15 blur-3xl rounded-full pointer-events-none" />
