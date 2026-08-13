@@ -4,6 +4,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getStrapiMedia, sortByOrder } from '@/lib/api';
+interface BusinessTabsBlockProps {
+  data?: any;
+}
 
 export default function BusinessTabsBlock({ data }: BusinessTabsBlockProps) {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
