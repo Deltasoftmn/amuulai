@@ -295,11 +295,16 @@ export default function Footer({ footerItems, footerData, settingData }: FooterP
 
         </div>
 
-        {/* COPYRIGHT */}
-        <div className="w-full pt-10 mt-12 text-center">
-          <p className="text-sm text-[#e2e8f0]/90 font-medium tracking-wide">
+        {/* COPYRIGHT & LEGAL */}
+        <div className="w-full pt-10 mt-12 flex flex-col sm:flex-row items-center justify-between border-t border-white/10 text-xs sm:text-sm text-[#e2e8f0]/90 font-medium tracking-wide gap-4">
+          <p>
             {copyright}
           </p>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy-policy" className="hover:text-white hover:underline transition-colors">
+              Нууцлалын бодлого
+            </Link>
+          </div>
         </div>
 
       </div>
